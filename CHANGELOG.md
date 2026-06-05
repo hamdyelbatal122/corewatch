@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.7] - 2026-06-06
+
+### Changed
+- Re-added dashboard preview screenshot after remote folder deletion
+
+---
+
 ## [2.1.6] - 2026-06-05
 
 ### Changed
