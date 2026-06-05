@@ -24,7 +24,7 @@
         "phpunit/phpunit": "^10.0|^11.0",
         "laravel/pint": "^1.15",
         "larastan/larastan": "^3.0",
-        "livewire/livewire": "^3.4"
+        "livewire/livewire": "^3.4 || ^4.0"
     },
     "scripts": {
         "test": "phpunit",

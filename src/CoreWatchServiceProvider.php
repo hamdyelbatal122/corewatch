@@ -96,9 +96,13 @@ class CoreWatchServiceProvider extends ServiceProvider
         $this->registerMiddleware();
         $this->registerRoutes();
 
-        if (class_exists(Livewire::class)) {
+        $this->app->booted(function (): void {
+            if (! class_exists(Livewire::class) || ! $this->app->bound('livewire.finder')) {
+                return;
+            }
+
             Livewire::component('corewatch-dashboard', CoreWatchDashboard::class);
-        }
+        });
     }
 
     protected function registerInfrastructure(): void

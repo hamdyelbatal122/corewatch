@@ -69,7 +69,7 @@
         </section>
 
         <footer class="text-center text-[10px] code-font pt-2 pb-4" style="color: var(--cw-muted);">
-            CoreWatch v<span x-text="config.version || '2.1'">2.1</span> · Laravel Server Health Sentinel
+            CoreWatch v<span x-text="config.version">—</span> · Laravel Server Health Sentinel
         </footer>
     </div>
 

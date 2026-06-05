@@ -11,6 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.3] - 2026-06-05
+
+### Added
+- `PackageVersion` helper — dashboard version is read automatically from Composer
+
+### Changed
+- Allow `livewire/livewire` ^3.4 or ^4.0 in dev dependencies
+- Removed CW logo box from header; removed broken icon next to RE-POLL button
+
+### Fixed
+- Livewire 4 compatibility: defer component registration until `livewire.finder` is bound (fixes CI/test boot errors)
+
+---
+
 ## [2.1.2] - 2026-06-05
 
 ### Changed
