@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.4] - 2026-06-05
+
+### Fixed
+- `PackageVersion` PHP 8.2 compatibility (remove typed class constant)
+
+---
+
 ## [2.1.3] - 2026-06-05
 
 ### Added

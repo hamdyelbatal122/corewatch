@@ -8,7 +8,7 @@ use Composer\InstalledVersions;
 
 final class PackageVersion
 {
-    private const string PACKAGE = 'hamzi/corewatch';
+    private const PACKAGE = 'hamzi/corewatch';
 
     public static function current(): string
     {
