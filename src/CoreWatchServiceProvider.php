@@ -4,73 +4,118 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch;
 
+use Hamzi\CoreWatch\Application\Actions\CheckHealthAndAlertAction;
+use Hamzi\CoreWatch\Application\Actions\ExecuteServiceCommandAction;
+use Hamzi\CoreWatch\Application\Actions\GetServerMetricsAction;
+use Hamzi\CoreWatch\Application\Actions\ParseLogFileAction;
 use Hamzi\CoreWatch\Console\Commands\CheckHealthCommand;
+use Hamzi\CoreWatch\Contracts\ApplicationHealthRepositoryInterface;
+use Hamzi\CoreWatch\Contracts\DatabaseStatsRepositoryInterface;
+use Hamzi\CoreWatch\Contracts\LogReaderInterface;
+use Hamzi\CoreWatch\Contracts\ShellExecutorInterface;
+use Hamzi\CoreWatch\Contracts\SystemMetricsCollectorInterface;
+use Hamzi\CoreWatch\Domain\Services\HealthThresholdEvaluator;
 use Hamzi\CoreWatch\Http\Controllers\DashboardController;
+use Hamzi\CoreWatch\Http\Controllers\HealthController;
+use Hamzi\CoreWatch\Http\Middleware\EnsureCoreWatchAuthorized;
+use Hamzi\CoreWatch\Infrastructure\Collectors\CpuMetricsCollector;
+use Hamzi\CoreWatch\Infrastructure\Collectors\DiskMetricsCollector;
+use Hamzi\CoreWatch\Infrastructure\Collectors\ProcessCollector;
+use Hamzi\CoreWatch\Infrastructure\Collectors\RamMetricsCollector;
+use Hamzi\CoreWatch\Infrastructure\Collectors\ServicesStatusCollector;
+use Hamzi\CoreWatch\Infrastructure\Collectors\SystemInfoCollector;
+use Hamzi\CoreWatch\Infrastructure\Collectors\SystemMetricsCollector;
+use Hamzi\CoreWatch\Infrastructure\Collectors\UptimeCollector;
+use Hamzi\CoreWatch\Infrastructure\Notifications\AlertDispatcher;
+use Hamzi\CoreWatch\Infrastructure\Notifications\SlackNotifier;
+use Hamzi\CoreWatch\Infrastructure\Notifications\TelegramNotifier;
+use Hamzi\CoreWatch\Infrastructure\Repositories\ApplicationHealthRepository;
+use Hamzi\CoreWatch\Infrastructure\Repositories\DatabaseStatsRepository;
+use Hamzi\CoreWatch\Infrastructure\Repositories\LogFileRepository;
+use Hamzi\CoreWatch\Infrastructure\Shell\LaravelShellExecutor;
 use Hamzi\CoreWatch\Livewire\CoreWatchDashboard;
+use Illuminate\Routing\Router;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
 use Livewire\Livewire;
 
 class CoreWatchServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any package services.
-     */
     public function register(): void
     {
-        // Merge package configuration with host application
         $this->mergeConfigFrom(
             __DIR__.'/../config/corewatch.php',
             'corewatch'
         );
 
-        // Bind System Monitor & Log Parser to container
-        $this->app->singleton(Services\SystemMonitor::class, function ($app) {
-            return new Services\SystemMonitor;
-        });
-
-        $this->app->singleton(Services\LogParser::class, function ($app) {
-            return new Services\LogParser;
-        });
+        $this->registerInfrastructure();
+        $this->registerApplication();
     }
 
-    /**
-     * Bootstrap any package services.
-     */
     public function boot(): void
     {
-        // Load Blade Views
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'corewatch');
 
-        // Publish Configuration
         if ($this->app->runningInConsole()) {
             $this->publishes([
                 __DIR__.'/../config/corewatch.php' => config_path('corewatch.php'),
             ], 'corewatch-config');
 
-            // Publish Views
             $this->publishes([
                 __DIR__.'/../resources/views' => resource_path('views/vendor/corewatch'),
             ], 'corewatch-views');
 
-            // Register Commands
             $this->commands([
                 CheckHealthCommand::class,
             ]);
         }
 
-        // Register package routes
+        $this->registerMiddleware();
         $this->registerRoutes();
 
-        // Register Livewire component dynamically if Livewire class is available
         if (class_exists(Livewire::class)) {
             Livewire::component('corewatch-dashboard', CoreWatchDashboard::class);
         }
     }
 
-    /**
-     * Register Dashboard & API Route bindings.
-     */
+    protected function registerInfrastructure(): void
+    {
+        $this->app->singleton(ShellExecutorInterface::class, LaravelShellExecutor::class);
+        $this->app->singleton(DatabaseStatsRepositoryInterface::class, DatabaseStatsRepository::class);
+        $this->app->singleton(ApplicationHealthRepositoryInterface::class, ApplicationHealthRepository::class);
+        $this->app->singleton(LogReaderInterface::class, LogFileRepository::class);
+
+        $this->app->singleton(CpuMetricsCollector::class);
+        $this->app->singleton(RamMetricsCollector::class);
+        $this->app->singleton(DiskMetricsCollector::class);
+        $this->app->singleton(UptimeCollector::class);
+        $this->app->singleton(SystemInfoCollector::class);
+        $this->app->singleton(ServicesStatusCollector::class);
+        $this->app->singleton(ProcessCollector::class);
+
+        $this->app->singleton(SystemMetricsCollectorInterface::class, SystemMetricsCollector::class);
+
+        $this->app->singleton(SlackNotifier::class);
+        $this->app->singleton(TelegramNotifier::class);
+        $this->app->singleton(AlertDispatcher::class);
+    }
+
+    protected function registerApplication(): void
+    {
+        $this->app->singleton(HealthThresholdEvaluator::class);
+        $this->app->singleton(GetServerMetricsAction::class);
+        $this->app->singleton(ParseLogFileAction::class);
+        $this->app->singleton(ExecuteServiceCommandAction::class);
+        $this->app->singleton(CheckHealthAndAlertAction::class);
+        $this->app->singleton(CoreWatchManager::class);
+    }
+
+    protected function registerMiddleware(): void
+    {
+        $router = $this->app->make(Router::class);
+        $router->aliasMiddleware('corewatch.auth', EnsureCoreWatchAuthorized::class);
+    }
+
     protected function registerRoutes(): void
     {
         if (! config('corewatch.enabled', true)) {
@@ -78,23 +123,32 @@ class CoreWatchServiceProvider extends ServiceProvider
         }
 
         $path = config('corewatch.path', 'corewatch');
-        $middleware = config('corewatch.middleware', ['web']);
+        $middleware = array_merge(
+            config('corewatch.middleware', ['web']),
+            ['corewatch.auth']
+        );
 
         Route::prefix($path)
             ->middleware($middleware)
             ->as('corewatch.')
             ->group(function () {
-                // UI Dashboard main route
                 Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-
-                // API Endpoint: Realtime Server Hardware Metrics
                 Route::get('/api/metrics', [DashboardController::class, 'metrics'])->name('api.metrics');
-
-                // API Endpoint: Streaming Log File Stream
                 Route::get('/api/logs', [DashboardController::class, 'logs'])->name('api.logs');
-
-                // API Endpoint: Administrative service controls
                 Route::post('/api/services/control', [DashboardController::class, 'controlService'])->name('api.services.control');
             });
+
+        if (config('corewatch.health_endpoint.enabled', true)) {
+            $healthMiddleware = config('corewatch.health_endpoint.public', false)
+                ? config('corewatch.middleware', ['web'])
+                : $middleware;
+
+            Route::prefix($path)
+                ->middleware($healthMiddleware)
+                ->as('corewatch.')
+                ->group(function () {
+                    Route::get('/api/health', HealthController::class)->name('api.health');
+                });
+        }
     }
 }

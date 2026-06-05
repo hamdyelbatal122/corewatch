@@ -58,9 +58,15 @@ To keep the codebase clean, robust, and reliable, please ensure your PRs adhere 
 3. **Write Tests:** Every new feature, endpoint, or bug fix must be covered by a corresponding automated test inside the `tests/` directory.
 4. **Descriptive Commits:** Use clear and descriptive commit messages (e.g. `feat: add database table listing`, `fix: parse older Nginx access log date patterns`).
 5. **No Truncated Code:** Keep code complete, fully documented with correct DocBlocks, and clean.
+6. **Layered Architecture:** New features must respect the package layers:
+   - Business rules → `src/Domain/`
+   - Use case orchestration → `src/Application/Actions/`
+   - External I/O (DB, shell, files) → `src/Infrastructure/`
+   - HTTP concerns → `src/Http/`
+   - Always define an interface in `src/Contracts/` when the class has external dependencies.
 
 ---
 
 ## 🐞 Reporting Security Vulnerabilities
 
-If you discover a security vulnerability within CoreWatch, please send an e-mail to **developer@hamzi.dev** instead of opening a public issue. All security vulnerabilities will be addressed immediately.
+If you discover a security vulnerability within CoreWatch, please send an e-mail to **hamdyelbatal122@hamzi.dev** instead of opening a public issue. All security vulnerabilities will be addressed immediately.

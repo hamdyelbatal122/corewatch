@@ -6,10 +6,11 @@ namespace Hamzi\CoreWatch\Tests\Feature;
 
 use Hamzi\CoreWatch\Tests\TestCase;
 use Illuminate\Support\Facades\Artisan;
+use PHPUnit\Framework\Attributes\Test;
 
 class DashboardTest extends TestCase
 {
-    /** @test */
+    #[Test]
     public function test_dashboard_uri_returns_successful_response(): void
     {
         $response = $this->get('/corewatch');
@@ -19,7 +20,7 @@ class DashboardTest extends TestCase
         $response->assertSee('COREWATCH');
     }
 
-    /** @test */
+    #[Test]
     public function test_api_metrics_returns_valid_telemetry_structure(): void
     {
         $response = $this->get('/corewatch/api/metrics');
@@ -42,7 +43,7 @@ class DashboardTest extends TestCase
         $response->assertJsonPath('success', true);
     }
 
-    /** @test */
+    #[Test]
     public function test_unregistered_service_key_returns_bad_request(): void
     {
         $response = $this->postJson('/corewatch/api/services/control', [
@@ -54,7 +55,7 @@ class DashboardTest extends TestCase
         $response->assertJsonFragment(['error' => 'Unauthorized or unregistered command trigger.']);
     }
 
-    /** @test */
+    #[Test]
     public function test_logs_fails_if_no_file_key(): void
     {
         $response = $this->getJson('/corewatch/api/logs');
@@ -62,11 +63,28 @@ class DashboardTest extends TestCase
         $response->assertStatus(422); // Laravel validation failed
     }
 
-    /** @test */
+    #[Test]
     public function test_check_health_command_works(): void
     {
         $exitCode = Artisan::call('corewatch:check-health');
 
         $this->assertEquals(0, $exitCode);
+    }
+
+    #[Test]
+    public function test_health_endpoint_returns_valid_structure(): void
+    {
+        $response = $this->get('/corewatch/api/health');
+
+        $response->assertJsonStructure([
+            'status',
+            'healthy',
+            'checks' => [
+                'cpu' => ['usage', 'threshold', 'healthy'],
+                'ram' => ['usage', 'threshold', 'healthy'],
+                'disk' => ['usage', 'threshold', 'healthy'],
+            ],
+            'timestamp',
+        ]);
     }
 }

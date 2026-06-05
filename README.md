@@ -4,8 +4,8 @@
 
 <p>
 <a href="https://packagist.org/packages/hamzi/corewatch"><img src="https://img.shields.io/badge/packagist-v1.0.0-5F57C9?style=flat-square" alt="Latest Stable Version"></a>
-<a href="https://github.com/hamdyelbatal122/JavaScript-calculator/actions"><img src="https://img.shields.io/badge/tests-passing-10B981?style=flat-square" alt="Build Status"></a>
-<a href="https://github.com/hamdyelbatal122/JavaScript-calculator/actions"><img src="https://img.shields.io/badge/pint-passing-10B981?style=flat-square" alt="Pint Status"></a>
+<a href="https://github.com/hamdyelbatal122/CoreWatch/actions"><img src="https://img.shields.io/badge/tests-passing-10B981?style=flat-square" alt="Build Status"></a>
+<a href="https://github.com/hamdyelbatal122/CoreWatch/actions"><img src="https://img.shields.io/badge/pint-passing-10B981?style=flat-square" alt="Pint Status"></a>
 <a href="https://packagist.org/packages/hamzi/corewatch"><img src="https://img.shields.io/badge/downloads-0-EF4444?style=flat-square" alt="Total Downloads"></a>
 <a href="https://php.net"><img src="https://img.shields.io/badge/php-^8.2|^-8.5-007EC6?style=flat-square" alt="PHP Version"></a>
 <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-74C812?style=flat-square" alt="License"></a>
@@ -61,6 +61,31 @@ graph TD
     F -->|Resource Threshold Checks| C
     F -->|Alert Breaches| I
 ```
+
+---
+
+## 🏗️ Package Architecture (Clean Architecture)
+
+CoreWatch follows layered architecture with clear separation of concerns:
+
+```
+src/
+├── Contracts/          # Interfaces (DIP — depend on abstractions)
+├── Domain/             # Business rules (Alert VO, HealthThresholdEvaluator)
+├── Application/        # Use cases (Actions) + DTOs
+├── Infrastructure/     # Collectors, Repositories, Notifications, Shell
+├── Http/               # Controllers, Middleware, Form Requests
+├── Console/            # Artisan commands (thin — delegate to Actions)
+└── Livewire/           # UI embedding component
+```
+
+| Layer | Responsibility | Example |
+| :--- | :--- | :--- |
+| **Contracts** | Define abstractions | `SystemMetricsCollectorInterface` |
+| **Domain** | Pure business logic | `HealthThresholdEvaluator` |
+| **Application** | Orchestrate use cases | `GetServerMetricsAction` |
+| **Infrastructure** | External I/O | `LogFileRepository`, `CpuMetricsCollector` |
+| **Http** | HTTP boundary | `DashboardController` (thin) |
 
 ---
 
@@ -187,6 +212,64 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('corewatch:check-health')->everyFiveMinutes();
 ```
+
+---
+
+## 👨‍💻 Developer API (Programmatic Access)
+
+CoreWatch exposes a **Facade** and **Manager** for use in your own code, jobs, and custom admin panels:
+
+```php
+use Hamzi\CoreWatch\Facades\CoreWatch;
+
+// Full metrics snapshot
+$metrics = CoreWatch::metrics();
+
+// Individual collectors
+$cpu  = CoreWatch::cpu();
+$ram  = CoreWatch::ram();
+$disk = CoreWatch::disk();
+
+// Lightweight health check (for uptime monitors)
+$health = CoreWatch::health();
+// ['status' => 'healthy', 'healthy' => true, 'checks' => [...], 'timestamp' => '...']
+
+// Read logs programmatically
+$logs = CoreWatch::readLogs('laravel', page: 1);
+
+// Run a whitelisted service command
+CoreWatch::runService('cache_clear');
+```
+
+### Health Endpoint (Uptime Monitors / K8s Probes)
+
+```
+GET /corewatch/api/health
+```
+
+Returns `200` when healthy, `503` when thresholds are breached. Configure in `.env`:
+
+```env
+COREWATCH_HEALTH_ENDPOINT=true
+COREWATCH_HEALTH_PUBLIC=false  # Set true for public load-balancer probes
+```
+
+### Custom Alert Channels (Events)
+
+Hook into threshold breaches in your `AppServiceProvider`:
+
+```php
+use Hamzi\CoreWatch\Events\ThresholdBreached;
+
+Event::listen(ThresholdBreached::class, function (ThresholdBreached $event) {
+    // Send to PagerDuty, Discord, email, etc.
+    foreach ($event->alerts as $alert) {
+        // $alert->name, $alert->current, $alert->severity
+    }
+});
+```
+
+See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full layer diagram and extension guide.
 
 ---
 

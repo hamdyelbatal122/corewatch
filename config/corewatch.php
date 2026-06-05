@@ -50,7 +50,7 @@ return [
     */
     'middleware' => [
         'web',
-        // 'auth', // Uncomment or add custom auth gates in production
+        // 'auth', // Uncomment in production to require authentication
     ],
 
     /*
@@ -58,12 +58,15 @@ return [
     | Authorization Gate / Callback
     |--------------------------------------------------------------------------
     |
-    | If you want to use a custom authorization gate callback, you can specify
-    | a class and method, or a Laravel Gate name. This offers fine-grained access.
-    | Set to null to rely purely on middleware.
+    | Set a callable in your AppServiceProvider for fine-grained access control:
+    |
+    |   config(['corewatch.gate' => fn ($request) => $request->user()?->isAdmin()]);
+    |
+    | Environment variables cannot hold callables; keep this null and configure
+    | programmatically, or rely on the middleware stack above.
     |
     */
-    'gate' => env('COREWATCH_GATE', null),
+    'gate' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -75,6 +78,23 @@ return [
     |
     */
     'refresh_interval' => env('COREWATCH_REFRESH_INTERVAL', 5000),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Health Check Endpoint
+    |--------------------------------------------------------------------------
+    |
+    | Lightweight JSON endpoint at /corewatch/api/health for uptime monitors,
+    | load balancers, and Kubernetes probes. Returns HTTP 200 when healthy,
+    | HTTP 503 when resource thresholds are breached.
+    |
+    | Set public to true to expose without corewatch.auth middleware.
+    |
+    */
+    'health_endpoint' => [
+        'enabled' => env('COREWATCH_HEALTH_ENDPOINT', true),
+        'public' => env('COREWATCH_HEALTH_PUBLIC', false),
+    ],
 
     /*
     |--------------------------------------------------------------------------
@@ -143,7 +163,7 @@ return [
     'services' => [
         'php_queue' => [
             'name' => 'Artisan Queue Restart',
-            'command' => 'php artisan queue:restart',
+            'command' => 'queue:restart',
             'type' => 'artisan', // 'artisan', 'shell'
         ],
         'cache_clear' => [

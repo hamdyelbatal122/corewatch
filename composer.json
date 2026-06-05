@@ -1,12 +1,13 @@
 {
     "name": "hamzi/corewatch",
-    "description": "An embedded, stealthy DevOps & Server Health Dashboard directly inside your Laravel application.",
+    "description": "Production-ready embedded DevOps dashboard for Laravel — server metrics, log streaming, safe ops panel, and alerting without external daemons.",
+    "keywords": ["laravel", "devops", "monitoring", "server-health", "dashboard", "log-viewer", "alerts"],
     "type": "library",
     "license": "MIT",
     "authors": [
         {
             "name": "Hamzi",
-            "email": "developer@hamzi.dev"
+            "email": "hamdyelbatal122@hamzi.dev"
         }
     ],
     "require": {
@@ -36,7 +37,10 @@
         "laravel": {
             "providers": [
                 "Hamzi\\CoreWatch\\CoreWatchServiceProvider"
-            ]
+            ],
+            "aliases": {
+                "CoreWatch": "Hamzi\\CoreWatch\\Facades\\CoreWatch"
+            }
         }
     },
     "minimum-stability": "dev",
