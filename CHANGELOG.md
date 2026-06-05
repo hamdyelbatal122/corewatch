@@ -11,6 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.6] - 2026-06-05
+
+### Changed
+- Updated README dashboard preview screenshot (`docs/images/dashboard-preview.png`)
+
+---
+
 ## [2.1.5] - 2026-06-05
 
 ### Fixed
