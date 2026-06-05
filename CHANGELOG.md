@@ -11,6 +11,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.2] - 2026-06-05
+
+### Changed
+- Redesigned dashboard with a unified design system (`.cw-*` components)
+- Added Light / Dark theme toggle with `localStorage` persistence and system preference fallback
+- Reorganized layout: System Metrics → Health & Operations → Infrastructure → Service Controls → Log Stream
+- CPU, RAM, and Disk cards now include progress bars and threshold-based alerts
+- Updated logs terminal, service controls, and output modal for both themes
+
+---
+
 ## [2.1.1] - 2026-06-05
 
 ### Fixed

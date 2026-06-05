@@ -1,33 +1,27 @@
-<!-- Disk Space Monospace Telemetry Table Partial -->
-<div class="bg-cyber-card border border-cyber-border rounded-xl p-5 hover:border-cyber-blue/40 transition duration-200"
-     :class="metrics.disk.usage_percentage >= 90 ? 'shadow-neon-red/10 border-cyber-red/30' : 'hover:shadow-neon-blue/5'">
-    <div class="flex items-center justify-between mb-4 border-b border-cyber-border/40 pb-2">
-        <div class="flex items-center gap-2">
-            <span class="w-2 h-2 rounded-full bg-cyber-blue animate-pulse"></span>
-            <span class="text-xs font-mono font-bold tracking-widest text-cyber-blue uppercase">DISK DIAGNOSTICS</span>
+<div class="cw-card" :class="metrics.disk.usage_percentage >= 90 && 'cw-card-alert'">
+    <div class="cw-card-header">
+        <div class="cw-card-title">
+            <span class="cw-dot cw-dot-pulse" style="background: var(--cw-warning);"></span>
+            Disk
         </div>
-        <span class="text-[10px] font-mono bg-cyber-blue/10 border border-cyber-blue/20 text-cyber-blue px-2 py-0.5 rounded" x-text="metrics.disk.total_formatted">0 GB</span>
+        <span class="cw-badge" x-text="metrics.disk.total_formatted">—</span>
     </div>
-
-    <table class="w-full text-left text-xs font-mono select-text">
+    <div class="cw-progress">
+        <div class="cw-progress-bar"
+             :class="metrics.disk.usage_percentage >= 90 ? 'danger' : (metrics.disk.usage_percentage >= 75 ? 'warn' : '')"
+             :style="'width:' + Math.min(metrics.disk.usage_percentage, 100) + '%'"></div>
+    </div>
+    <table class="cw-table">
         <tbody>
-            <tr class="border-b border-cyber-border/20 hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500 font-semibold">Active Usage</td>
-                <td class="py-2.5 text-right font-bold" 
-                    :class="metrics.disk.usage_percentage >= 90 ? 'text-cyber-red' : (metrics.disk.usage_percentage >= 75 ? 'text-cyber-orange' : 'text-cyber-green')" 
-                    x-text="metrics.disk.usage_percentage + '%'">0%</td>
+            <tr>
+                <td class="cw-label">Usage</td>
+                <td class="cw-value" :class="metrics.disk.usage_percentage >= 90 ? 'text-danger' : (metrics.disk.usage_percentage >= 75 ? 'text-warning' : 'text-success')" x-text="metrics.disk.usage_percentage + '%'">0%</td>
             </tr>
-            <tr class="border-b border-cyber-border/20 hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">Allocated Disk Space</td>
-                <td class="py-2.5 text-right text-white font-semibold" x-text="metrics.disk.used_formatted">0 GB</td>
-            </tr>
-            <tr class="border-b border-cyber-border/20 hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">Available Storage</td>
-                <td class="py-2.5 text-right text-white font-semibold" x-text="metrics.disk.free_formatted">0 GB</td>
-            </tr>
-            <tr class="hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500 align-top">Workspace Path</td>
-                <td class="py-2.5 text-right text-cyber-blue font-semibold break-all text-[10px] leading-relaxed max-w-[200px] ml-auto" :title="metrics.disk.path" x-text="metrics.disk.path">-</td>
+            <tr><td class="cw-label">Used</td><td class="cw-value" x-text="metrics.disk.used_formatted">—</td></tr>
+            <tr><td class="cw-label">Free</td><td class="cw-value" x-text="metrics.disk.free_formatted">—</td></tr>
+            <tr>
+                <td class="cw-label align-top pt-2">Path</td>
+                <td class="cw-value text-[10px] break-all leading-relaxed max-w-[180px] ml-auto" :title="metrics.disk.path" x-text="metrics.disk.path">—</td>
             </tr>
         </tbody>
     </table>

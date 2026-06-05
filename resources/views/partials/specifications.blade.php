@@ -1,39 +1,19 @@
-<!-- Host Specifications Monospace Table Partial -->
-<div class="bg-cyber-card border border-cyber-border rounded-xl p-5 hover:shadow-neon-blue/5 transition duration-200">
-    <div class="flex items-center justify-between mb-4 border-b border-cyber-border/40 pb-2">
-        <h3 class="text-sm font-semibold tracking-wider text-gray-400 uppercase mb-0.5 flex items-center gap-2">
-            <span class="w-1.5 h-3 bg-cyber-blue rounded"></span>
-            Host Specifications
-        </h3>
-        <span class="text-[10px] font-mono text-gray-500 uppercase">Static Stats</span>
+<div class="cw-card h-full">
+    <div class="cw-card-header">
+        <div class="cw-card-title">
+            <span class="cw-dot" style="background: var(--cw-accent);"></span>
+            Host Specs
+        </div>
+        <span class="cw-badge">Static</span>
     </div>
-
-    <table class="w-full text-left text-xs font-mono select-text">
+    <table class="cw-table">
         <tbody>
-            <tr class="border-b border-cyber-border/20 hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500 font-semibold">Host / IP</td>
-                <td class="py-2.5 text-right text-white" x-text="metrics.system_info.hostname">localhost</td>
-            </tr>
-            <tr class="border-b border-cyber-border/20 hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">Operating System</td>
-                <td class="py-2.5 text-right text-white" x-text="metrics.system_info.os">Linux</td>
-            </tr>
-            <tr class="border-b border-cyber-border/20 hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">Kernel Version</td>
-                <td class="py-2.5 text-right text-cyber-blue font-semibold truncate max-w-[150px]" :title="metrics.system_info.kernel" x-text="metrics.system_info.kernel">-</td>
-            </tr>
-            <tr class="border-b border-cyber-border/20 hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">PHP Version</td>
-                <td class="py-2.5 text-right text-white font-semibold" x-text="metrics.system_info.php_version">-</td>
-            </tr>
-            <tr class="border-b border-cyber-border/20 hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">Laravel Core</td>
-                <td class="py-2.5 text-right text-cyber-green font-bold" x-text="'v' + metrics.system_info.laravel_version">-</td>
-            </tr>
-            <tr class="hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">Server Software</td>
-                <td class="py-2.5 text-right text-white truncate max-w-[150px]" :title="metrics.system_info.server_software" x-text="metrics.system_info.server_software">-</td>
-            </tr>
+            <tr><td class="cw-label">Hostname</td><td class="cw-value" x-text="metrics.system_info.hostname">—</td></tr>
+            <tr><td class="cw-label">OS</td><td class="cw-value" x-text="metrics.system_info.os">—</td></tr>
+            <tr><td class="cw-label">Kernel</td><td class="cw-value text-[10px] break-all max-w-[160px] ml-auto" :title="metrics.system_info.kernel" x-text="metrics.system_info.kernel">—</td></tr>
+            <tr><td class="cw-label">PHP</td><td class="cw-value" x-text="metrics.system_info.php_version">—</td></tr>
+            <tr><td class="cw-label">Laravel</td><td class="cw-value text-success" x-text="'v' + metrics.system_info.laravel_version">—</td></tr>
+            <tr><td class="cw-label">Server</td><td class="cw-value text-[10px] truncate max-w-[160px] ml-auto" :title="metrics.system_info.server_software" x-text="metrics.system_info.server_software">—</td></tr>
         </tbody>
     </table>
 </div>

@@ -1,119 +1,81 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-[#030712] text-gray-100">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CoreWatch // DevOps Server Health Sentinel</title>
-    <!-- Tailwind CSS 3.x via CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>CoreWatch — Server Health Dashboard</title>
     <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        cyber: {
-                            bg: '#050b18',
-                            card: '#0c1528',
-                            border: '#1f2e4d',
-                            green: '#00ff88',
-                            blue: '#00ccff',
-                            purple: '#ab47bc',
-                            orange: '#ff9100',
-                            red: '#ff3366',
-                        }
-                    },
-                    boxShadow: {
-                        'neon-green': '0 0 15px rgba(0, 255, 136, 0.15)',
-                        'neon-blue': '0 0 15px rgba(0, 204, 255, 0.15)',
-                        'neon-red': '0 0 15px rgba(255, 51, 102, 0.15)',
-                    }
-                }
-            }
-        }
+        (function () {
+            var t = localStorage.getItem('corewatch-theme');
+            var d = window.matchMedia('(prefers-color-scheme: dark)').matches;
+            document.documentElement.classList.add(t === 'light' || t === 'dark' ? t : (d ? 'dark' : 'light'));
+        })();
     </script>
-    <!-- Google Fonts: Inter & JetBrains Mono -->
+    <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            background-image: radial-gradient(circle at 50% 0%, #0d1e3d 0%, #050b18 100%);
-        }
-        .code-font {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        /* Custom scrollbars */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: #0c1528;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: #1f2e4d;
-            border-radius: 3px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #00ccff;
-        }
-    </style>
-    <!-- AlpineJS 3.x via CDN -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    @include('corewatch::partials.styles')
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="h-full antialiased" x-data="corewatchDashboard()">
-    
-    <!-- Top Glowing Bar -->
-    <div class="h-1.5 w-full bg-gradient-to-r from-cyber-blue via-cyber-green to-cyber-red animate-pulse"></div>
+<body class="h-full antialiased min-h-screen" x-data="corewatchDashboard()" x-cloak>
 
-    <div class="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8 space-y-6">
+    <div class="cw-topbar"></div>
 
-        <!-- HEADER SECTION -->
+    <div class="cw-page space-y-6">
+
         @include('corewatch::partials.header')
 
-        <!-- TOP METRICS GRID (CPU, RAM, DISK AS MONOSPACE TABLES) -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-            @include('corewatch::partials.cpu')
-            @include('corewatch::partials.ram')
-            @include('corewatch::partials.disk')
-        </div>
-
-        <!-- COMPETITIVE TELEMETRY GRID: TOP CPU PROCESSES & DATABASE TELEMETRY -->
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-7">
-                @include('corewatch::partials.processes')
+        {{-- ① System Metrics --}}
+        <section class="cw-section">
+            <h2 class="cw-section-title">System Metrics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 lg:gap-5">
+                @include('corewatch::partials.cpu')
+                @include('corewatch::partials.ram')
+                @include('corewatch::partials.disk')
             </div>
-            <div class="lg:col-span-5 flex flex-col gap-6">
-                @include('corewatch::partials.database')
+        </section>
+
+        {{-- ② Health & Operations --}}
+        <section class="cw-section">
+            <h2 class="cw-section-title">Health & Operations</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 lg:gap-5">
                 @include('corewatch::partials.ops-insights')
                 @include('corewatch::partials.app-checks')
+                @include('corewatch::partials.database')
             </div>
         </section>
 
-        <!-- MIDDLE ROW: HOST SPECIFICATIONS & SERVICES CONTROLLER -->
-        <section class="grid grid-cols-1 lg:grid-cols-12 gap-6">
-            <div class="lg:col-span-5">
+        {{-- ③ Infrastructure --}}
+        <section class="cw-section">
+            <h2 class="cw-section-title">Infrastructure</h2>
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-5">
                 @include('corewatch::partials.specifications')
-            </div>
-            <div class="lg:col-span-7">
-                @include('corewatch::partials.services')
+                @include('corewatch::partials.processes')
             </div>
         </section>
 
-        <!-- BOTTOM ROW: LIVE LOG STREAMING TERMINAL -->
-        <section class="grid grid-cols-1 gap-6">
+        {{-- ④ Service Controls --}}
+        <section class="cw-section">
+            <h2 class="cw-section-title">Service Controls</h2>
+            @include('corewatch::partials.services')
+        </section>
+
+        {{-- ⑤ Logs --}}
+        <section class="cw-section">
+            <h2 class="cw-section-title">Log Stream</h2>
             @include('corewatch::partials.logs')
         </section>
-        
+
+        <footer class="text-center text-[10px] code-font pt-2 pb-4" style="color: var(--cw-muted);">
+            CoreWatch v<span x-text="config.version || '2.1'">2.1</span> · Laravel Server Health Sentinel
+        </footer>
     </div>
 
-    <!-- TERMINAL SERVICE OUTPUT MODAL -->
     @include('corewatch::partials.modal')
-
-    <!-- MAIN APP JAVASCRIPT CONTROLLER -->
     @include('corewatch::partials.script')
 
+    <style>[x-cloak] { display: none !important; }</style>
 </body>
 </html>

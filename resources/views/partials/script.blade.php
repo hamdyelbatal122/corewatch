@@ -1,8 +1,16 @@
-<!-- Main Dashboard Script Partial -->
 <script>
+    (function () {
+        var stored = localStorage.getItem('corewatch-theme');
+        var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var theme = stored === 'light' || stored === 'dark' ? stored : (prefersDark ? 'dark' : 'light');
+        document.documentElement.classList.remove('light', 'dark');
+        document.documentElement.classList.add(theme);
+    })();
+
     function corewatchDashboard() {
         return {
             config: @json($config),
+            theme: document.documentElement.classList.contains('dark') ? 'dark' : 'light',
             polling: true,
             loadingMetrics: false,
             metrics: {
@@ -45,21 +53,31 @@
             pollIntervalId: null,
 
             init() {
-                // Initialize first default log file if configured
+                this.applyTheme(this.theme);
+
                 if (this.config.logs && this.config.logs.length > 0) {
                     this.logs.activeFile = this.config.logs[0].key;
                 }
 
-                // Initial fetch
                 this.fetchMetrics();
                 this.fetchLogs();
 
-                // Start automatic metric poll interval
                 this.pollIntervalId = setInterval(() => {
                     if (this.polling) {
                         this.fetchMetrics();
                     }
                 }, this.config.refresh_interval);
+            },
+
+            setTheme(mode) {
+                this.theme = mode;
+                this.applyTheme(mode);
+                localStorage.setItem('corewatch-theme', mode);
+            },
+
+            applyTheme(mode) {
+                document.documentElement.classList.remove('light', 'dark');
+                document.documentElement.classList.add(mode);
             },
 
             fetchMetrics() {
@@ -76,7 +94,7 @@
                     })
                     .catch(err => {
                         console.error('CoreWatch metrics fetch error:', err);
-                        this.polling = false; // Suspend polling on persistent error
+                        this.polling = false;
                     })
                     .finally(() => {
                         this.loadingMetrics = false;
@@ -93,7 +111,6 @@
                 this.logs.loading = true;
                 this.expandedLogIndexes = [];
 
-                // Construct URL query parameters
                 let params = new URLSearchParams({
                     file: this.logs.activeFile,
                     page: this.logs.page
@@ -148,12 +165,11 @@
                 if (newPage < 1) return;
                 this.logs.page = newPage;
                 this.fetchLogs();
-                // Scroll to top of terminal screen
                 document.getElementById('terminal-screen').scrollTop = 0;
             },
 
             triggerServiceCommand(serviceKey) {
-                if (!confirm('Are you absolutely sure you want to trigger this administrative control task?')) {
+                if (!confirm('Are you sure you want to run this administrative task?')) {
                     return;
                 }
 
@@ -171,19 +187,17 @@
                 .then(data => {
                     this.outputModal.title = data.service || 'Control Utility';
                     this.outputModal.success = data.success;
-                    this.outputModal.content = data.success 
-                        ? (data.output || 'Command executed successfully with no returned output.') 
-                        : (data.error || 'Execution encountered an unhandled exception status.');
+                    this.outputModal.content = data.success
+                        ? (data.output || 'Command executed successfully.')
+                        : (data.error || 'Execution failed.');
                     this.outputModal.show = true;
-
-                    // Re-poll metrics to catch updated active/inactive status immediately
                     this.fetchMetrics();
                 })
                 .catch(err => {
                     console.error('Service control transmission issue:', err);
-                    this.outputModal.title = 'Transmission Failure';
+                    this.outputModal.title = 'Connection Failed';
                     this.outputModal.success = false;
-                    this.outputModal.content = 'CoreWatch API connection failed. Ensure web application and PHP process are running.';
+                    this.outputModal.content = 'Could not reach CoreWatch API.';
                     this.outputModal.show = true;
                 })
                 .finally(() => {
