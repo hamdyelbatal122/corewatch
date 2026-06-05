@@ -29,7 +29,7 @@ final class PackageVersion
                 $data = json_decode($contents, true);
 
                 if (is_array($data) && ! empty($data['version']) && is_string($data['version'])) {
-                    return ltrim($data['version'], 'v');
+                    return $data['version'];
                 }
             }
         }

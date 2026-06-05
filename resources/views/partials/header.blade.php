@@ -2,7 +2,7 @@
     <div>
         <h1 class="text-xl sm:text-2xl font-bold tracking-tight flex items-center gap-2 flex-wrap" style="color: var(--cw-text);">
             <span>@cw('title')</span>
-            <span class="cw-badge cw-badge-accent text-[10px]" x-text="'v' + config.version">v—</span>
+            <span class="cw-badge cw-badge-accent text-[10px]" x-text="config.version">—</span>
         </h1>
         <p class="text-sm mt-0.5" style="color: var(--cw-muted);">@cw('subtitle')</p>
     </div>
