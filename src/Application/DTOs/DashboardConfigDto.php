@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch\Application\DTOs;
 
+use Hamzi\CoreWatch\Support\Translation;
+
 final readonly class DashboardConfigDto
 {
     /**
@@ -27,6 +29,8 @@ final readonly class DashboardConfigDto
                 config('corewatch.logs.files', [])
             ),
             'locale' => app()->getLocale(),
+            'labels' => Translation::all(),
+            'version' => '2.1.0',
         ];
     }
 }

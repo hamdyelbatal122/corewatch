@@ -17,7 +17,8 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('corewatch::dashboard');
-        $response->assertSee(__('corewatch::title'));
+        $response->assertSee('COREWATCH');
+        $response->assertDontSee('corewatch::title');
     }
 
     #[Test]

@@ -45,6 +45,7 @@ use Hamzi\CoreWatch\Livewire\CoreWatchDashboard;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Router;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\ServiceProvider;
@@ -67,6 +68,9 @@ class CoreWatchServiceProvider extends ServiceProvider
     {
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'corewatch');
         $this->loadTranslationsFrom(__DIR__.'/../lang', 'corewatch');
+        Blade::directive('cw', function (string $expression): string {
+            return "<?php echo \Hamzi\CoreWatch\Support\Translation::get({$expression}); ?>";
+        });
 
         if ($this->app->runningInConsole()) {
             $this->publishes([

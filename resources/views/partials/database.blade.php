@@ -22,7 +22,7 @@
                 <td class="py-2.5 text-right text-white font-semibold" x-text="metrics.database ? metrics.database.size_formatted : '0 B'">0 B</td>
             </tr>
             <tr class="hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">Total Tables Count</td>
+                <td class="py-2.5 text-gray-500">Table Count</td>
                 <td class="py-2.5 text-right text-cyber-green font-semibold" x-text="metrics.database ? metrics.database.tables_count + ' Tables' : '0 Tables'">0 Tables</td>
             </tr>
         </tbody>

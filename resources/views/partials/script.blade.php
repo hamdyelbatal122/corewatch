@@ -14,7 +14,10 @@
                 services: {},
                 processes: [],
                 database: { driver: '-', tables_count: 0, size_formatted: '-', connection: 'Checking...', active: false },
-                app_checks: {}
+                app_checks: {},
+                failed_jobs: { status: '-', active: true },
+                ssl: { status: '-', active: true },
+                schedule: { status: '-', active: false },
             },
             runningServiceKey: '',
             expandedLogIndexes: [],

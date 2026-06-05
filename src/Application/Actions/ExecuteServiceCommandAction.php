@@ -7,6 +7,7 @@ namespace Hamzi\CoreWatch\Application\Actions;
 use Exception;
 use Hamzi\CoreWatch\Contracts\ShellExecutorInterface;
 use Hamzi\CoreWatch\Infrastructure\Audit\ServiceAuditLogger;
+use Hamzi\CoreWatch\Support\Translation;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
 
@@ -37,7 +38,7 @@ final class ExecuteServiceCommandAction
         if (($service['enabled'] ?? true) === false) {
             return [
                 'success' => false,
-                'error' => __('corewatch::service_disabled'),
+                'error' => Translation::get('service_disabled'),
                 'disabled' => true,
             ];
         }

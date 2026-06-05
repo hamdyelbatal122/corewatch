@@ -14,4 +14,8 @@ return [
     'failed_jobs' => 'Failed Queue Jobs',
     'scheduler' => 'Task Scheduler',
     'service_disabled' => 'This service command is disabled by configuration.',
+    'table_count' => 'Table Count',
+    'workspace_path' => 'Workspace Path',
+    'secure_triggers' => 'Secure Whitelisted Triggers',
+    'loading' => 'Loading...',
 ];

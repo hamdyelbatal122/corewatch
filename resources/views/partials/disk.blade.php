@@ -26,8 +26,8 @@
                 <td class="py-2.5 text-right text-white font-semibold" x-text="metrics.disk.free_formatted">0 GB</td>
             </tr>
             <tr class="hover:bg-[#050b18]/40 transition">
-                <td class="py-2.5 text-gray-500">Workspace Base Path</td>
-                <td class="py-2.5 text-right text-cyber-blue font-semibold truncate max-w-[120px]" :title="metrics.disk.path" x-text="metrics.disk.path">-</td>
+                <td class="py-2.5 text-gray-500 align-top">Workspace Path</td>
+                <td class="py-2.5 text-right text-cyber-blue font-semibold break-all text-[10px] leading-relaxed max-w-[200px] ml-auto" :title="metrics.disk.path" x-text="metrics.disk.path">-</td>
             </tr>
         </tbody>
     </table>

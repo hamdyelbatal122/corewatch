@@ -11,6 +11,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.1] - 2026-06-05
+
+### Fixed
+- Translation keys (`corewatch::title`, etc.) no longer appear in the UI when lang files are missing
+- Added `Translation` helper with English fallbacks and `@cw` Blade directive
+- Frontend labels passed via `config.labels` for Alpine.js dynamic text
+- Disk workspace path truncation improved (`break-all` + wider column)
+- Process table PID/CPU/MEM column alignment (`tabular-nums`)
+- Renamed redundant "Total Tables Count" to "Table Count"
+
+---
+
 ## [2.1.0] - 2026-06-05
 
 ### Added

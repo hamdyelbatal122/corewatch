@@ -5,7 +5,7 @@
             <span class="w-1.5 h-3 bg-cyber-green rounded"></span>
             Service Controller Daemon
         </h3>
-        <span class="text-xs text-gray-500 font-mono">Secure Whitelisted Triggers</span>
+        <span class="text-[10px] text-gray-400 font-mono bg-cyber-card border border-cyber-border/60 px-2 py-1 rounded">Secure Whitelisted Triggers</span>
     </div>
 
     <table class="w-full text-left text-xs font-mono select-text">

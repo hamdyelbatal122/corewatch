@@ -12,10 +12,10 @@
         <table class="w-full text-left text-xs font-mono select-text">
             <thead>
                 <tr class="bg-[#0c121e] border-b border-cyber-border text-cyber-blue text-[10px] uppercase font-bold">
-                    <th class="p-2.5">PID</th>
+                    <th class="p-2.5 w-16">PID</th>
                     <th class="p-2.5">USER</th>
-                    <th class="p-2.5">CPU</th>
-                    <th class="p-2.5">MEM</th>
+                    <th class="p-2.5 w-14 text-right">CPU</th>
+                    <th class="p-2.5 w-14 text-right">MEM</th>
                     <th class="p-2.5">COMMAND</th>
                 </tr>
             </thead>
@@ -29,10 +29,10 @@
                 <!-- Processes loop -->
                 <template x-for="proc in metrics.processes" :key="proc.pid">
                     <tr class="border-b border-cyber-border/40 hover:bg-cyber-card/40 transition font-mono">
-                        <td class="p-2.5 text-gray-400 font-semibold" x-text="proc.pid"></td>
+                        <td class="p-2.5 text-gray-400 font-semibold tabular-nums" x-text="proc.pid"></td>
                         <td class="p-2.5 text-gray-400" x-text="proc.user"></td>
-                        <td class="p-2.5 text-cyber-green font-bold" x-text="proc.cpu"></td>
-                        <td class="p-2.5 text-cyber-blue" x-text="proc.mem"></td>
+                        <td class="p-2.5 text-cyber-green font-bold tabular-nums text-right" x-text="proc.cpu"></td>
+                        <td class="p-2.5 text-cyber-blue tabular-nums text-right" x-text="proc.mem"></td>
                         <td class="p-2.5 text-white truncate max-w-[150px]" :title="proc.command" x-text="proc.command"></td>
                     </tr>
                 </template>
