@@ -48,6 +48,13 @@ Schedule → CheckHealthCommand
 | Middleware for auth | DRY authorization across HTTP and Livewire |
 | Events for alerts | Host apps can hook custom notification channels |
 
+## Available Artisan Commands
+
+| Command | Description |
+|---------|-------------|
+| `corewatch:install` | Publish config, print dashboard URL and production checklist |
+| `corewatch:check-health` | Evaluate thresholds and dispatch alerts |
+
 ## Extending CoreWatch
 
 ### Add a custom metric collector

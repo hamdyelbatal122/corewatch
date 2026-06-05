@@ -1,21 +1,72 @@
 <div align="center">
 <h1>Laravel CoreWatch 🛡️</h1>
-<p><strong>A world-class, production-ready DevOps & Server Health Dashboard for Laravel 11, 12 & 13</strong></p>
+<p><strong>Embedded DevOps dashboard for Laravel — monitor, debug, and operate your server without leaving your app</strong></p>
 
 <p>
-<a href="https://packagist.org/packages/hamzi/corewatch"><img src="https://img.shields.io/badge/packagist-v1.0.0-5F57C9?style=flat-square" alt="Latest Stable Version"></a>
-<a href="https://github.com/hamdyelbatal122/CoreWatch/actions"><img src="https://img.shields.io/badge/tests-passing-10B981?style=flat-square" alt="Build Status"></a>
-<a href="https://github.com/hamdyelbatal122/CoreWatch/actions"><img src="https://img.shields.io/badge/pint-passing-10B981?style=flat-square" alt="Pint Status"></a>
-<a href="https://packagist.org/packages/hamzi/corewatch"><img src="https://img.shields.io/badge/downloads-0-EF4444?style=flat-square" alt="Total Downloads"></a>
-<a href="https://php.net"><img src="https://img.shields.io/badge/php-^8.2|^-8.5-007EC6?style=flat-square" alt="PHP Version"></a>
-<a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-74C812?style=flat-square" alt="License"></a>
+<a href="https://packagist.org/packages/hamzi/corewatch"><img src="https://img.shields.io/packagist/v/hamzi/corewatch?style=flat-square&color=5F57C9" alt="Latest Stable Version"></a>
+<a href="https://github.com/hamdyelbatal122/CoreWatch/actions"><img src="https://img.shields.io/github/actions/workflow/status/hamdyelbatal122/CoreWatch/ci.yml?branch=master&style=flat-square&label=tests" alt="Build Status"></a>
+<a href="https://packagist.org/packages/hamzi/corewatch"><img src="https://img.shields.io/packagist/dt/hamzi/corewatch?style=flat-square&color=10B981" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/hamzi/corewatch"><img src="https://img.shields.io/packagist/l/hamzi/corewatch?style=flat-square&color=74C812" alt="License"></a>
+<a href="https://php.net"><img src="https://img.shields.io/packagist/php-v/hamzi/corewatch?style=flat-square&color=007EC6" alt="PHP Version"></a>
+</p>
+
+<p>
+<a href="#-quick-start-30-seconds">Quick Start</a> ·
+<a href="#-why-corewatch">Why CoreWatch?</a> ·
+<a href="#-developer-api-programmatic-access">Developer API</a> ·
+<a href="docs/ARCHITECTURE.md">Architecture</a> ·
+<a href="docs/FILAMENT.md">Filament</a> ·
+<a href="docs/TROUBLESHOOTING.md">Troubleshooting</a>
 </p>
 </div>
 
 ---
 
 > [!IMPORTANT]
-> **CoreWatch** is a zero-dependency, self-contained server monitoring utility designed specifically for production Laravel systems. It replaces heavy external daemons by exposing highly performant, read-only system files directly through Laravel's secure execution pipeline.
+> **CoreWatch** is a zero-dependency, self-contained server monitoring utility built for production Laravel systems. No Netdata, no Grafana agent, no external daemon — just `composer require` and you have a full DevOps terminal inside your admin panel.
+
+---
+
+## 🤔 Why CoreWatch?
+
+| Problem | CoreWatch Solution |
+| :--- | :--- |
+| "I need server metrics but don't want another daemon" | Reads `/proc` directly — zero external processes |
+| "Log files are 5GB and crash my log viewer" | O(1) memory backward-seeking parser streams any file size |
+| "I'm afraid of RCE in admin panels" | Whitelisted command keys only — no raw shell input |
+| "I use Filament/Nova and need embedded monitoring" | Livewire component + modular Blade partials |
+| "I need alerts when CPU/RAM spikes" | Scheduled sentinel with Slack, Telegram, or custom events |
+| "Load balancer needs a health endpoint" | `GET /corewatch/api/health` returns 200/503 |
+
+### CoreWatch vs. Alternatives
+
+| Feature | CoreWatch | Netdata | Laravel Telescope | Grafana Agent |
+| :--- | :---: | :---: | :---: | :---: |
+| Zero external daemon | ✅ | ❌ | ✅ | ❌ |
+| Server metrics (CPU/RAM/Disk) | ✅ | ✅ | ❌ | ✅ |
+| Log file streaming | ✅ | ❌ | ❌ | ❌ |
+| Safe ops panel | ✅ | ❌ | ❌ | ❌ |
+| Laravel-native install | ✅ | ❌ | ✅ | ❌ |
+| Filament/Livewire embed | ✅ | ❌ | ❌ | ❌ |
+| Built-in alerting | ✅ | ✅ | ❌ | ✅ |
+
+---
+
+## ⚡ Quick Start (30 seconds)
+
+```bash
+composer require hamzi/corewatch
+php artisan corewatch:install
+```
+
+Open **`/corewatch`** in your browser. That's it.
+
+For production, add `auth` middleware in `config/corewatch.php` and schedule health checks:
+
+```php
+// routes/console.php
+Schedule::command('corewatch:check-health')->everyFiveMinutes();
+```
 
 ---
 
@@ -28,8 +79,8 @@ graph TD
     %% Elements
     A["💻 Master Dashboard View <br> (AlpineJS Client)"]
     B["🛣️ CoreWatch Routing Gateway <br> (Protected Middleware)"]
-    C["⚙️ SystemMonitor Service"]
-    D["📄 LogParser Streamer <br> (Direct fseek seek)"]
+    C["⚙️ SystemMetricsCollector <br> (Clean Architecture Actions)"]
+    D["📄 LogFileRepository <br> (O-1 fseek streaming)"]
     E["⚡ Whitelisted Services Exec <br> (RCE-Proof Command List)"]
     F["⏰ Sentinel Health Command <br> (Artisan Cron Daemon)"]
     
@@ -117,37 +168,38 @@ CoreWatch separates all diagnostics into elegant, self-contained monospace table
 7. **App Integrity Checks:** Automated operational verification for Cache drivers, Artisan Queue connections, Environment status, and Security debug mode states.
 8. **Livewire Embed Support:** Built-in dynamic Livewire component (`livewire:corewatch-dashboard`) for drag-and-drop embedding inside administrative panels like **Filament** and **Laravel Nova**.
 9. **Continuous Sentinel Daemon:** Scheduled console monitor (`corewatch:check-health`) that alerts your DevOps channels (Slack & Telegram) when resource thresholds are breached.
+10. **Developer Facade API:** `CoreWatch::metrics()`, `CoreWatch::health()`, and `ThresholdBreached` events for custom integrations.
+11. **One-Command Install:** `php artisan corewatch:install` publishes config and prints your production checklist.
+12. **Health Probe Endpoint:** `GET /corewatch/api/health` for uptime monitors, load balancers, and Kubernetes liveness probes.
 
 ---
 
 ## 🛠️ Installation & Setup
 
-### 1. Link Local Package (Development)
-Configure your host application's `composer.json` to register the local package folder path:
+### Production Install (Packagist)
+
+```bash
+composer require hamzi/corewatch
+php artisan corewatch:install
+```
+
+### Publish Views (Optional — for customization)
+
+```bash
+php artisan corewatch:install --views
+# or manually:
+php artisan vendor:publish --tag=corewatch-views
+```
+
+### Local Development (Path Repository)
 
 ```json
-"repositories": [
-    {
-        "type": "path",
-        "url": "../corewatch"
-    }
-],
+"repositories": [{ "type": "path", "url": "../CoreWatch" }]
 ```
 
-Then pull the package via composer:
 ```bash
 composer require hamzi/corewatch:dev-main
-```
-
-### 2. Publish Configuration & Views
-Publish the assets to customize layout templates and rule lists:
-
-```bash
-# Publish CoreWatch configuration (config/corewatch.php)
-php artisan vendor:publish --tag=corewatch-config
-
-# Publish Blade partials & layouts for customized dashboards
-php artisan vendor:publish --tag=corewatch-views
+php artisan corewatch:install
 ```
 
 ---
@@ -269,7 +321,13 @@ Event::listen(ThresholdBreached::class, function (ThresholdBreached $event) {
 });
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for the full layer diagram and extension guide.
+| Guide | Description |
+| :--- | :--- |
+| [Architecture](docs/ARCHITECTURE.md) | Layer diagram, data flow, and extension guide |
+| [Filament Integration](docs/FILAMENT.md) | Embed in Filament admin panels |
+| [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and fixes |
+| [Contributing](CONTRIBUTING.md) | Development workflow and coding standards |
+| [Security](SECURITY.md) | Vulnerability reporting policy |
 
 ---
 

@@ -9,6 +9,7 @@ use Hamzi\CoreWatch\Application\Actions\ExecuteServiceCommandAction;
 use Hamzi\CoreWatch\Application\Actions\GetServerMetricsAction;
 use Hamzi\CoreWatch\Application\Actions\ParseLogFileAction;
 use Hamzi\CoreWatch\Console\Commands\CheckHealthCommand;
+use Hamzi\CoreWatch\Console\Commands\InstallCommand;
 use Hamzi\CoreWatch\Contracts\ApplicationHealthRepositoryInterface;
 use Hamzi\CoreWatch\Contracts\DatabaseStatsRepositoryInterface;
 use Hamzi\CoreWatch\Contracts\LogReaderInterface;
@@ -66,6 +67,7 @@ class CoreWatchServiceProvider extends ServiceProvider
             ], 'corewatch-views');
 
             $this->commands([
+                InstallCommand::class,
                 CheckHealthCommand::class,
             ]);
         }

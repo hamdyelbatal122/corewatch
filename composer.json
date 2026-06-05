@@ -1,9 +1,14 @@
 {
     "name": "hamzi/corewatch",
     "description": "Production-ready embedded DevOps dashboard for Laravel — server metrics, log streaming, safe ops panel, and alerting without external daemons.",
-    "keywords": ["laravel", "devops", "monitoring", "server-health", "dashboard", "log-viewer", "alerts"],
+    "keywords": ["laravel", "devops", "monitoring", "server-health", "dashboard", "log-viewer", "alerts", "filament", "livewire", "server-monitoring", "uptime"],
+    "homepage": "https://github.com/hamdyelbatal122/CoreWatch",
     "type": "library",
     "license": "MIT",
+    "support": {
+        "issues": "https://github.com/hamdyelbatal122/CoreWatch/issues",
+        "source": "https://github.com/hamdyelbatal122/CoreWatch"
+    },
     "authors": [
         {
             "name": "Hamzi",

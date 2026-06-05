@@ -1,0 +1,33 @@
+name: Feature Request
+description: Suggest a new feature for CoreWatch
+labels: ["enhancement"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem / Use Case
+      description: What problem does this solve for Laravel developers?
+      placeholder: "I'm always frustrated when..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: solution
+    attributes:
+      label: Proposed Solution
+      description: How would you like CoreWatch to handle this?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: layer
+    attributes:
+      label: Which layer would this affect?
+      options:
+        - Dashboard UI
+        - Metrics Collectors
+        - Log Viewer
+        - Alerting / Notifications
+        - Developer API / Facade
+        - Documentation
+        - Other

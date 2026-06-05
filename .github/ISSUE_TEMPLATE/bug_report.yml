@@ -1,0 +1,57 @@
+name: Bug Report
+description: Report a bug in CoreWatch
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please include as much detail as possible.
+
+  - type: input
+    id: version
+    attributes:
+      label: CoreWatch Version
+      placeholder: "e.g. 2.0.0"
+    validations:
+      required: true
+
+  - type: input
+    id: laravel
+    attributes:
+      label: Laravel Version
+      placeholder: "e.g. 12.x"
+    validations:
+      required: true
+
+  - type: input
+    id: php
+    attributes:
+      label: PHP Version
+      placeholder: "e.g. 8.3"
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: What happened vs. what you expected?
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      placeholder: |
+        1. Install corewatch
+        2. Visit /corewatch
+        3. See error
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs / Screenshots
+      description: Paste error messages or stack traces
