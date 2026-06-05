@@ -25,7 +25,8 @@ final class CheckHealthAndAlertAction
      *     cpu: array<string, mixed>,
      *     ram: array<string, mixed>,
      *     disk: array<string, mixed>,
-     *     system_info: array<string, string>
+     *     system_info: array<string, string>,
+     *     thresholds: array{cpu: float, ram: float, disk: float}
      * }
      */
     public function execute(): array

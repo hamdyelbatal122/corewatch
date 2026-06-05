@@ -203,7 +203,7 @@ final class LogFileRepository implements LogReaderInterface
                 return [
                     'date' => $dateStr,
                     'level' => strtoupper($matches['level']),
-                    'ip' => $matches['ip'] ?? null,
+                    'ip' => $matches['ip'],
                     'message' => trim($matches['message']),
                     'raw' => $line,
                 ];
@@ -266,7 +266,7 @@ final class LogFileRepository implements LogReaderInterface
     private function parseCommonLogFormatDate(string $clfDate): string
     {
         $parts = explode(' ', $clfDate);
-        $dateTimeStr = $parts[0] ?? '';
+        $dateTimeStr = $parts[0];
         $dateTime = DateTime::createFromFormat('d/M/Y:H:i:s', $dateTimeStr);
         if ($dateTime) {
             return $dateTime->format('Y-m-d H:i:s');

@@ -36,5 +36,7 @@ abstract class TestCase extends OrchestraTestCase
         $app['config']->set('corewatch.path', 'corewatch');
         $app['config']->set('corewatch.middleware', ['web']);
         $app['config']->set('database.default', 'testing');
+        $app['config']->set('app.locale', 'en');
+        $app['config']->set('corewatch.metrics_cache_ttl', 0);
     }
 }

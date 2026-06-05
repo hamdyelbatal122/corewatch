@@ -11,6 +11,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [2.1.0] - 2026-06-05
+
+### Added
+- PHPStan/Larastan static analysis (level 5) with CI job
+- Dependabot and automated release workflow on tag push
+- Prometheus metrics endpoint: `GET /corewatch/api/metrics/prometheus`
+- `corewatch:heartbeat` command for scheduler monitoring
+- SSL certificate expiry collector with configurable warning threshold
+- Failed queue jobs monitor (`failed_jobs` table)
+- Operations Insights dashboard widget (SSL, jobs, scheduler)
+- Service command audit logging with configurable log channel
+- API rate limiting (`throttle:corewatch`)
+- Metrics response caching (`COREWATCH_METRICS_CACHE_TTL`)
+- Arabic (`ar`) and English (`en`) translations
+- `docs/DEPLOYMENT.md` and dashboard preview screenshot
+- `CoreWatchAuthorizer` shared between HTTP middleware and Livewire
+- Expanded test suite (18 tests)
+
+### Changed
+- Dangerous shell commands (`redis_flush`, `supervisor_restart`, `opcache_reset`) disabled by default
+- Dashboard only lists enabled service commands in UI
+- Install command now documents heartbeat, Prometheus, and scheduler setup
+
+### Security
+- Audit trail for all whitelisted service command executions
+- Rate limiting on all CoreWatch API routes
+
+---
+
 ## [2.0.0] - 2026-06-05
 
 ### Added

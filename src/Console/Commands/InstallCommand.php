@@ -48,9 +48,12 @@ final class InstallCommand extends Command
         $this->line('  1. Add <fg=cyan>auth</> middleware in <fg=cyan>config/corewatch.php</>');
         $this->line('  2. Set a gate callback in AppServiceProvider for fine-grained access');
         $this->line('  3. Configure Slack/Telegram alerts in <fg=cyan>.env</>');
-        $this->line('  4. Schedule <fg=cyan>corewatch:check-health</> in routes/console.php');
+        $this->line('  4. Schedule heartbeat + health checks in routes/console.php');
         $this->newLine();
+        $this->line('  <fg=gray>Schedule::command(\'corewatch:heartbeat\')->everyMinute();</>');
         $this->line('  <fg=gray>Schedule::command(\'corewatch:check-health\')->everyFiveMinutes();</>');
+        $this->newLine();
+        $this->components->twoColumnDetail('Prometheus', "{$appUrl}/{$path}/api/metrics/prometheus");
         $this->newLine();
 
         $this->components->info('Documentation: https://github.com/hamdyelbatal122/CoreWatch');

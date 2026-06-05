@@ -5,15 +5,17 @@ declare(strict_types=1);
 namespace Hamzi\CoreWatch\Livewire;
 
 use Hamzi\CoreWatch\Application\DTOs\DashboardConfigDto;
-use Hamzi\CoreWatch\Http\Middleware\EnsureCoreWatchAuthorized;
-use Illuminate\Contracts\View\View;
-use Livewire\Attributes\Middleware;
+use Hamzi\CoreWatch\Support\CoreWatchAuthorizer;
 use Livewire\Component;
 
-#[Middleware([EnsureCoreWatchAuthorized::class])]
 final class CoreWatchDashboard extends Component
 {
-    public function render(): View
+    public function mount(): void
+    {
+        CoreWatchAuthorizer::authorize();
+    }
+
+    public function render()
     {
         $config = DashboardConfigDto::fromConfig();
 

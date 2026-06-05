@@ -31,11 +31,9 @@ final class ServicesStatusCollector
         foreach ($services as $key => $meta) {
             $isActive = false;
 
-            if ($meta['process'] !== null) {
-                $check = $this->shell->run('pgrep -x '.escapeshellarg($meta['process']));
-                if ($check['success'] && ! empty(trim($check['output']))) {
-                    $isActive = true;
-                }
+            $check = $this->shell->run('pgrep -x '.escapeshellarg($meta['process']));
+            if ($check['success'] && ! empty(trim($check['output']))) {
+                $isActive = true;
             }
 
             if (! $isActive && $meta['port'] !== null) {

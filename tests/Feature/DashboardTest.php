@@ -17,7 +17,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertViewIs('corewatch::dashboard');
-        $response->assertSee('COREWATCH');
+        $response->assertSee(__('corewatch::title'));
     }
 
     #[Test]
@@ -38,6 +38,9 @@ class DashboardTest extends TestCase
                 'processes',
                 'database' => ['driver', 'tables_count', 'size_formatted', 'connection', 'active'],
                 'app_checks' => ['cache', 'queue', 'security', 'environment'],
+                'failed_jobs' => ['available', 'count', 'status', 'active', 'detail'],
+                'ssl' => ['enabled', 'status', 'active', 'detail'],
+                'schedule' => ['enabled', 'status', 'active', 'detail'],
             ],
         ]);
         $response->assertJsonPath('success', true);

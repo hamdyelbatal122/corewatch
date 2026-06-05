@@ -14,7 +14,15 @@ final class ParseLogFileAction
     ) {}
 
     /**
-     * @return array{logs: array<int, array<string, mixed>>, total_scanned: int, has_more: bool, error?: string}
+     * @return array{
+     *     logs: array<int, array<string, mixed>>,
+     *     total_scanned: int,
+     *     has_more: bool,
+     *     error?: string,
+     *     not_found?: bool,
+     *     file_name?: string,
+     *     file_path?: string
+     * }
      */
     public function execute(string $fileKey, int $page, LogFilterDto $filters): array
     {

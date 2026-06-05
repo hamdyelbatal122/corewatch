@@ -81,6 +81,33 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Metrics Cache TTL (seconds)
+    |--------------------------------------------------------------------------
+    |
+    | Cache collected metrics to reduce /proc reads. Set to 0 to disable.
+    |
+    */
+    'metrics_cache_ttl' => (int) env('COREWATCH_METRICS_CACHE_TTL', 5),
+
+    /*
+    |--------------------------------------------------------------------------
+    | API Rate Limiting (requests per minute)
+    |--------------------------------------------------------------------------
+    */
+    'rate_limit' => (int) env('COREWATCH_RATE_LIMIT', 60),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Service Command Audit Log
+    |--------------------------------------------------------------------------
+    */
+    'audit_log' => [
+        'enabled' => env('COREWATCH_AUDIT_LOG', true),
+        'channel' => env('COREWATCH_AUDIT_LOG_CHANNEL', 'single'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Health Check Endpoint
     |--------------------------------------------------------------------------
     |
@@ -98,6 +125,43 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Prometheus Metrics Endpoint
+    |--------------------------------------------------------------------------
+    */
+    'prometheus_endpoint' => [
+        'enabled' => env('COREWATCH_PROMETHEUS_ENDPOINT', true),
+        'public' => env('COREWATCH_PROMETHEUS_PUBLIC', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | SSL Certificate Monitoring
+    |--------------------------------------------------------------------------
+    */
+    'ssl' => [
+        'enabled' => env('COREWATCH_SSL_ENABLED', true),
+        'host' => env('COREWATCH_SSL_HOST'),
+        'port' => (int) env('COREWATCH_SSL_PORT', 443),
+        'warning_days' => (int) env('COREWATCH_SSL_WARNING_DAYS', 14),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Scheduler Heartbeat Monitoring
+    |--------------------------------------------------------------------------
+    |
+    | Register: Schedule::command('corewatch:heartbeat')->everyMinute();
+    |
+    */
+    'schedule' => [
+        'enabled' => env('COREWATCH_SCHEDULE_MONITOR', true),
+        'heartbeat_cache_key' => 'corewatch_schedule_heartbeat',
+        'heartbeat_ttl_minutes' => 30,
+        'max_age_minutes' => (int) env('COREWATCH_SCHEDULE_MAX_AGE', 10),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Enabled Widgets & Modules
     |--------------------------------------------------------------------------
     |
@@ -110,6 +174,7 @@ return [
         'disk' => true,
         'services' => true,
         'logs' => true,
+        'ops_insights' => true,
     ],
 
     /*
@@ -164,27 +229,32 @@ return [
         'php_queue' => [
             'name' => 'Artisan Queue Restart',
             'command' => 'queue:restart',
-            'type' => 'artisan', // 'artisan', 'shell'
+            'type' => 'artisan',
+            'enabled' => true,
         ],
         'cache_clear' => [
             'name' => 'Clear Application Cache',
             'command' => 'cache:clear',
             'type' => 'artisan',
+            'enabled' => true,
         ],
         'redis_flush' => [
             'name' => 'Flush Redis Cache',
             'command' => 'redis-cli flushall',
             'type' => 'shell',
+            'enabled' => false,
         ],
         'supervisor_restart' => [
             'name' => 'Restart Supervisor Services',
             'command' => 'supervisorctl restart all',
             'type' => 'shell',
+            'enabled' => false,
         ],
         'opcache_reset' => [
             'name' => 'Reset PHP OPcache',
             'command' => 'php -r "opcache_reset();"',
             'type' => 'shell',
+            'enabled' => false,
         ],
     ],
 

@@ -55,7 +55,7 @@ final class CpuMetricsCollector
 
         if (function_exists('sys_getloadavg')) {
             $sysLoad = sys_getloadavg();
-            if (is_array($sysLoad) && count($sysLoad) >= 3) {
+            if (is_array($sysLoad) && count($sysLoad) > 2) {
                 return [
                     (float) $sysLoad[0],
                     (float) $sysLoad[1],
@@ -71,9 +71,9 @@ final class CpuMetricsCollector
                 $loads = explode(',', $parts[1]);
 
                 return [
-                    (float) trim($loads[0] ?? '0'),
-                    (float) trim($loads[1] ?? '0'),
-                    (float) trim($loads[2] ?? '0'),
+                    (float) trim($loads[0]),
+                    (float) trim($loads[1]),
+                    (float) trim($loads[2]),
                 ];
             }
         }

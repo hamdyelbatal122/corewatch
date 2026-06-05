@@ -23,7 +23,13 @@
         "orchestra/testbench": "^9.0|^10.0",
         "phpunit/phpunit": "^10.0|^11.0",
         "laravel/pint": "^1.15",
+        "larastan/larastan": "^3.0",
         "livewire/livewire": "^3.4"
+    },
+    "scripts": {
+        "test": "phpunit",
+        "lint": "pint --test",
+        "analyse": "phpstan analyse --memory-limit=512M"
     },
     "suggest": {
         "livewire/livewire": "Allows embedding the reactive CoreWatch dashboard inside Filament, Nova, or custom Livewire admin templates."

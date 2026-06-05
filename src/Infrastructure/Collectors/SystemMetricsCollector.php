@@ -8,6 +8,7 @@ use Hamzi\CoreWatch\Contracts\ApplicationHealthRepositoryInterface;
 use Hamzi\CoreWatch\Contracts\DatabaseStatsRepositoryInterface;
 use Hamzi\CoreWatch\Contracts\ShellExecutorInterface;
 use Hamzi\CoreWatch\Contracts\SystemMetricsCollectorInterface;
+use Hamzi\CoreWatch\Infrastructure\Repositories\FailedJobsRepository;
 
 final class SystemMetricsCollector implements SystemMetricsCollectorInterface
 {
@@ -22,6 +23,9 @@ final class SystemMetricsCollector implements SystemMetricsCollectorInterface
         private readonly ProcessCollector $processes,
         private readonly DatabaseStatsRepositoryInterface $database,
         private readonly ApplicationHealthRepositoryInterface $applicationHealth,
+        private readonly FailedJobsRepository $failedJobs,
+        private readonly SslCertificateCollector $ssl,
+        private readonly ScheduleHeartbeatCollector $schedule,
     ) {}
 
     public function collect(): array
@@ -36,6 +40,9 @@ final class SystemMetricsCollector implements SystemMetricsCollectorInterface
             'processes' => $this->processes->collect(),
             'database' => $this->database->getStats(),
             'app_checks' => $this->applicationHealth->getChecks(),
+            'failed_jobs' => $this->failedJobs->getStats(),
+            'ssl' => $this->ssl->collect(),
+            'schedule' => $this->schedule->collect(),
         ];
     }
 

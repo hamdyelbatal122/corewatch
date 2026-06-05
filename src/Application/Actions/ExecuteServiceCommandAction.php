@@ -6,6 +6,7 @@ namespace Hamzi\CoreWatch\Application\Actions;
 
 use Exception;
 use Hamzi\CoreWatch\Contracts\ShellExecutorInterface;
+use Hamzi\CoreWatch\Infrastructure\Audit\ServiceAuditLogger;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
 
@@ -13,12 +14,13 @@ final class ExecuteServiceCommandAction
 {
     public function __construct(
         private readonly ShellExecutorInterface $shell,
+        private readonly ServiceAuditLogger $auditLogger,
     ) {}
 
     /**
-     * @return array{success: bool, service?: string, output?: string, error?: string, not_found?: bool}
+     * @return array{success: bool, service?: string, output?: string, error?: string, not_found?: bool, disabled?: bool}
      */
-    public function execute(string $serviceKey): array
+    public function execute(string $serviceKey, ?int $userId = null, ?string $ip = null): array
     {
         $servicesConfig = config('corewatch.services', []);
 
@@ -31,6 +33,15 @@ final class ExecuteServiceCommandAction
         }
 
         $service = $servicesConfig[$serviceKey];
+
+        if (($service['enabled'] ?? true) === false) {
+            return [
+                'success' => false,
+                'error' => __('corewatch::service_disabled'),
+                'disabled' => true,
+            ];
+        }
+
         $cmdText = $service['command'];
         $cmdType = $service['type'];
 
@@ -52,12 +63,16 @@ final class ExecuteServiceCommandAction
                 $output = $processResult->output() ?: $processResult->errorOutput();
             }
 
+            $this->auditLogger->log($serviceKey, $service['name'], $success, $userId, $ip);
+
             return [
                 'success' => $success,
                 'service' => $service['name'],
                 'output' => trim($output) ?: 'Command completed successfully (no output).',
             ];
         } catch (Exception $e) {
+            $this->auditLogger->log($serviceKey, $service['name'], false, $userId, $ip);
+
             return [
                 'success' => false,
                 'error' => $e->getMessage(),

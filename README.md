@@ -61,10 +61,15 @@ php artisan corewatch:install
 
 Open **`/corewatch`** in your browser. That's it.
 
+<p align="center">
+  <img src="docs/images/dashboard-preview.png" alt="CoreWatch Dashboard Preview" width="800">
+</p>
+
 For production, add `auth` middleware in `config/corewatch.php` and schedule health checks:
 
 ```php
 // routes/console.php
+Schedule::command('corewatch:heartbeat')->everyMinute();
 Schedule::command('corewatch:check-health')->everyFiveMinutes();
 ```
 
@@ -257,11 +262,12 @@ COREWATCH_TELEGRAM_BOT_TOKEN="0000000000:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 COREWATCH_TELEGRAM_CHAT_ID="-1000000000000"
 ```
 
-Register the checker command in `routes/console.php` to run every five minutes:
+Register heartbeat and health checks in `routes/console.php`:
 
 ```php
 use Illuminate\Support\Facades\Schedule;
 
+Schedule::command('corewatch:heartbeat')->everyMinute();
 Schedule::command('corewatch:check-health')->everyFiveMinutes();
 ```
 
@@ -306,6 +312,26 @@ COREWATCH_HEALTH_ENDPOINT=true
 COREWATCH_HEALTH_PUBLIC=false  # Set true for public load-balancer probes
 ```
 
+### Prometheus (Grafana / Monitoring)
+
+```
+GET /corewatch/api/metrics/prometheus
+```
+
+```env
+COREWATCH_PROMETHEUS_ENDPOINT=true
+COREWATCH_PROMETHEUS_PUBLIC=false
+```
+
+### Arabic Localization
+
+```php
+// AppServiceProvider or config/app.php
+'locale' => 'ar',
+```
+
+Publish translations: `php artisan vendor:publish --tag=corewatch-lang`
+
 ### Custom Alert Channels (Events)
 
 Hook into threshold breaches in your `AppServiceProvider`:
@@ -326,6 +352,7 @@ Event::listen(ThresholdBreached::class, function (ThresholdBreached $event) {
 | [Architecture](docs/ARCHITECTURE.md) | Layer diagram, data flow, and extension guide |
 | [Filament Integration](docs/FILAMENT.md) | Embed in Filament admin panels |
 | [Troubleshooting](docs/TROUBLESHOOTING.md) | Common issues and fixes |
+| [Deployment](docs/DEPLOYMENT.md) | Production checklist |
 | [Contributing](CONTRIBUTING.md) | Development workflow and coding standards |
 | [Security](SECURITY.md) | Vulnerability reporting policy |
 

@@ -87,6 +87,7 @@
             </div>
             <div class="lg:col-span-5 flex flex-col gap-6">
                 @include('corewatch::partials.database')
+                @include('corewatch::partials.ops-insights')
                 @include('corewatch::partials.app-checks')
             </div>
         </section>

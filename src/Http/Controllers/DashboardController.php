@@ -81,9 +81,13 @@ final class DashboardController extends Controller
 
     public function controlService(ControlServiceRequest $request): JsonResponse
     {
-        $result = $this->executeService->execute($request->input('service_key'));
+        $result = $this->executeService->execute(
+            $request->input('service_key'),
+            $request->user()?->id,
+            $request->ip(),
+        );
 
-        if (! empty($result['not_found'])) {
+        if (! empty($result['not_found']) || ! empty($result['disabled'])) {
             return response()->json([
                 'success' => false,
                 'error' => $result['error'],

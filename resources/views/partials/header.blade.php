@@ -9,10 +9,10 @@
         </div>
         <div>
             <h1 class="text-2xl font-bold tracking-tight text-white flex items-center gap-2.5">
-                COREWATCH
-                <span class="text-xs font-mono px-2 py-0.5 border border-cyber-green/30 bg-cyber-green/10 text-cyber-green rounded-full shadow-neon-green/10">v13.8-Sentinel</span>
+                {{ __('corewatch::title') }}
+                <span class="text-xs font-mono px-2 py-0.5 border border-cyber-green/30 bg-cyber-green/10 text-cyber-green rounded-full shadow-neon-green/10">v2.1</span>
             </h1>
-            <p class="text-sm text-gray-400">Stealthy DevOps & Real-time Server Health Monitor</p>
+            <p class="text-sm text-gray-400">{{ __('corewatch::subtitle') }}</p>
         </div>
     </div>
 
@@ -24,12 +24,12 @@
                 <span class="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" :class="polling ? 'bg-cyber-green' : 'bg-cyber-red'"></span>
                 <span class="relative inline-flex rounded-full h-2.5 w-2.5" :class="polling ? 'bg-cyber-green' : 'bg-cyber-red'"></span>
             </span>
-            <span class="text-gray-300" x-text="polling ? 'Polling Active' : 'Polling Suspended'"></span>
+            <span class="text-gray-300" x-text="polling ? '{{ __('corewatch::polling_active') }}' : '{{ __('corewatch::polling_suspended') }}'"></span>
         </div>
 
         <!-- Last Uptime Info -->
         <div class="px-3.5 py-1.5 bg-cyber-card border border-cyber-border rounded-lg text-xs">
-            <span class="text-gray-400 font-mono">UPTIME:</span>
+            <span class="text-gray-400 font-mono">{{ __('corewatch::uptime') }}:</span>
             <span class="text-cyber-blue font-semibold font-mono ml-1" x-text="metrics.uptime">Loading...</span>
         </div>
 
@@ -38,7 +38,7 @@
             <svg class="w-3.5 h-3.5" :class="loadingMetrics ? 'animate-spin' : ''" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18.2"></path>
             </svg>
-            RE-POLL
+            {{ __('corewatch::refresh') }}
         </button>
     </div>
 </header>
