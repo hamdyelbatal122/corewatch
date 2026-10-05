@@ -9,14 +9,17 @@ use Hamzi\CoreWatch\Application\Actions\ExecuteServiceCommandAction;
 use Hamzi\CoreWatch\Application\Actions\GetServerMetricsAction;
 use Hamzi\CoreWatch\Application\Actions\ParseLogFileAction;
 use Hamzi\CoreWatch\Console\Commands\CheckHealthCommand;
+use Hamzi\CoreWatch\Console\Commands\DoctorCommand;
 use Hamzi\CoreWatch\Console\Commands\HeartbeatCommand;
 use Hamzi\CoreWatch\Console\Commands\InstallCommand;
+use Hamzi\CoreWatch\Console\Commands\TestAlertCommand;
 use Hamzi\CoreWatch\Contracts\ApplicationHealthRepositoryInterface;
 use Hamzi\CoreWatch\Contracts\DatabaseStatsRepositoryInterface;
 use Hamzi\CoreWatch\Contracts\LogReaderInterface;
 use Hamzi\CoreWatch\Contracts\ShellExecutorInterface;
 use Hamzi\CoreWatch\Contracts\SystemMetricsCollectorInterface;
 use Hamzi\CoreWatch\Domain\Services\HealthThresholdEvaluator;
+use Hamzi\CoreWatch\Domain\Services\SystemDoctor;
 use Hamzi\CoreWatch\Http\Controllers\DashboardController;
 use Hamzi\CoreWatch\Http\Controllers\HealthController;
 use Hamzi\CoreWatch\Http\Controllers\PrometheusController;
@@ -89,6 +92,8 @@ class CoreWatchServiceProvider extends ServiceProvider
                 InstallCommand::class,
                 HeartbeatCommand::class,
                 CheckHealthCommand::class,
+                DoctorCommand::class,
+                TestAlertCommand::class,
             ]);
         }
 
@@ -135,6 +140,7 @@ class CoreWatchServiceProvider extends ServiceProvider
     protected function registerApplication(): void
     {
         $this->app->singleton(HealthThresholdEvaluator::class);
+        $this->app->singleton(SystemDoctor::class);
         $this->app->singleton(GetServerMetricsAction::class);
         $this->app->singleton(ParseLogFileAction::class);
         $this->app->singleton(ExecuteServiceCommandAction::class);

@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static array<string, mixed> readLogs(string $fileKey, int $page = 1, ?\Hamzi\CoreWatch\Application\DTOs\LogFilterDto $filters = null)
  * @method static array<string, mixed> runService(string $serviceKey)
  * @method static array<string, mixed> checkHealth()
+ * @method static array<int, array{category: string, check: string, status: string, detail: string}> doctor()
  *
  * @see CoreWatchManager
  */

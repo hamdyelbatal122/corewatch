@@ -204,6 +204,9 @@ return [
     'notifications' => [
         'channels' => ['slack', 'telegram'], // 'slack', 'telegram'
 
+        // Queue alert notifications in background. Set to true, false, or a queue name.
+        'queue' => env('COREWATCH_NOTIFICATIONS_QUEUE', false),
+
         'slack' => [
             'webhook_url' => env('COREWATCH_SLACK_WEBHOOK_URL'),
             'channel' => env('COREWATCH_SLACK_CHANNEL', '#devops-alerts'),

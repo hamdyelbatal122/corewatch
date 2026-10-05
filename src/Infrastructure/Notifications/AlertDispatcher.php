@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Hamzi\CoreWatch\Infrastructure\Notifications;
 
 use Hamzi\CoreWatch\Domain\ValueObjects\Alert;
+use Hamzi\CoreWatch\Jobs\SendQueuedAlertJob;
 
 final class AlertDispatcher
 {
@@ -19,7 +20,26 @@ final class AlertDispatcher
      */
     public function dispatch(array $alerts, array $systemInfo): void
     {
+        /** @var array<int, string> $channels */
         $channels = config('corewatch.notifications.channels', []);
+
+        if (count($channels) === 0) {
+            return;
+        }
+
+        $queueConfig = config('corewatch.notifications.queue', false);
+
+        if ($queueConfig !== false) {
+            $job = new SendQueuedAlertJob($alerts, $systemInfo, $channels);
+
+            if (is_string($queueConfig) && $queueConfig !== '') {
+                $job->onQueue($queueConfig);
+            }
+
+            dispatch($job);
+
+            return;
+        }
 
         if (in_array('slack', $channels, true)) {
             $this->slack->notify($alerts, $systemInfo);

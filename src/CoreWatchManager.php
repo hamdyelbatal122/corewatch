@@ -10,6 +10,7 @@ use Hamzi\CoreWatch\Application\Actions\GetServerMetricsAction;
 use Hamzi\CoreWatch\Application\Actions\ParseLogFileAction;
 use Hamzi\CoreWatch\Application\DTOs\LogFilterDto;
 use Hamzi\CoreWatch\Contracts\SystemMetricsCollectorInterface;
+use Hamzi\CoreWatch\Domain\Services\SystemDoctor;
 
 /**
  * Central entry point for programmatic CoreWatch access.
@@ -24,6 +25,7 @@ final class CoreWatchManager
         private readonly ExecuteServiceCommandAction $services,
         private readonly CheckHealthAndAlertAction $healthCheck,
         private readonly SystemMetricsCollectorInterface $collector,
+        private readonly SystemDoctor $doctor,
     ) {}
 
     /**
@@ -123,5 +125,13 @@ final class CoreWatchManager
     public function checkHealth(): array
     {
         return $this->healthCheck->execute();
+    }
+
+    /**
+     * @return array<int, array{category: string, check: string, status: string, detail: string}>
+     */
+    public function doctor(): array
+    {
+        return $this->doctor->runDiagnostics();
     }
 }
