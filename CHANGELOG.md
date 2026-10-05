@@ -11,7 +11,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [2.1.7] - 2026-06-06
+## [2.2.0] - 2026-10-05
+
+## Summary
+Release 2.2.0 delivers diagnostic tooling, asynchronous background alert queuing, static analysis upgrades to PHPStan Level 8, and enhanced system resilience with strict Throwable exception handling across all collectors and repositories.
+
+## Changes
+- Added `SystemDoctor` service and `php artisan corewatch:doctor` command for comprehensive server diagnostics across System, Database, Cache, Queue, Scheduler, Alerts, and Security.
+- Added `php artisan corewatch:test-alert` command with interactive diagnostic feedback to verify Slack and Telegram channel delivery.
+- Added asynchronous alert dispatching via `SendQueuedAlertJob` implementing `ShouldQueue` with backoff retries, configurable via `COREWATCH_NOTIFICATIONS_QUEUE`.
+- Added `doctor()` method to `CoreWatchManager` and `CoreWatch` Facade for programmatic diagnostic checks.
+- Hardened exception handling across collectors, controllers, repositories, and actions from `\Exception` to `\Throwable` to prevent unhandled fatal application crashes.
+- Upgraded PHPStan static analysis configuration to Level 8 with zero errors.
+- Resolved Composer dependency security advisories and expanded test suite to 32 tests with 211 assertions.
+- Enforced clean code standards and removed emoji artifacts across all code, commands, and repository documentation.
 
 ### Changed
 - Re-added dashboard preview screenshot after remote folder deletion

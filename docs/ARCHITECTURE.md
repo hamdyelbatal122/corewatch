@@ -35,7 +35,7 @@ Schedule → CheckHealthCommand
         → CheckHealthAndAlertAction
         → HealthThresholdEvaluator (Domain)
         → ThresholdBreached Event
-        → AlertDispatcher → Slack / Telegram
+        → AlertDispatcher → SendQueuedAlertJob (Queue) / Slack / Telegram (Sync)
 ```
 
 ## Key Design Decisions
@@ -53,7 +53,10 @@ Schedule → CheckHealthCommand
 | Command | Description |
 |---------|-------------|
 | `corewatch:install` | Publish config, print dashboard URL and production checklist |
+| `corewatch:heartbeat` | Record a scheduler heartbeat for cron monitoring |
 | `corewatch:check-health` | Evaluate thresholds and dispatch alerts |
+| `corewatch:doctor` | Run comprehensive system diagnostics and environment health audit |
+| `corewatch:test-alert` | Send a test alert notification to verify Slack/Telegram channel delivery |
 
 ## Extending CoreWatch
 
@@ -80,4 +83,5 @@ use Hamzi\CoreWatch\Facades\CoreWatch;
 
 $metrics = CoreWatch::metrics();
 $health  = CoreWatch::health(); // For uptime monitors
+$doctor  = CoreWatch::doctor(); // Environment & system diagnostic results
 ```

@@ -23,20 +23,20 @@
 ---
 
 > [!IMPORTANT]
-> **CoreWatch** is a zero-dependency, self-contained server monitoring utility built for production Laravel systems. No Netdata, no Grafana agent, no external daemon — just `composer require` and you have a full DevOps terminal inside your admin panel.
+> **CoreWatch** is a self-contained server monitoring utility for Laravel applications. It provides real-time system metrics, log streaming, and operational controls without requiring external agents or daemons like Netdata or Grafana.
 
 ---
 
-## 🤔 Why CoreWatch?
+## Why CoreWatch?
 
 | Problem | CoreWatch Solution |
 | :--- | :--- |
-| "I need server metrics but don't want another daemon" | Reads `/proc` directly — zero external processes |
-| "Log files are 5GB and crash my log viewer" | O(1) memory backward-seeking parser streams any file size |
-| "I'm afraid of RCE in admin panels" | Whitelisted command keys only — no raw shell input |
-| "I use Filament/Nova and need embedded monitoring" | Livewire component + modular Blade partials |
-| "I need alerts when CPU/RAM spikes" | Scheduled sentinel with Slack, Telegram, or custom events |
-| "Load balancer needs a health endpoint" | `GET /corewatch/api/health` returns 200/503 |
+| "I need server metrics without external daemons" | Reads `/proc` directly — zero background processes |
+| "Log files are multi-gigabyte and crash web viewers" | O(1) memory backward-seeking parser streams any file size |
+| "I want safe administrative actions without shell risks" | Whitelisted command keys only — no raw shell input accepted |
+| "I use Filament or Livewire and need embedded monitoring" | Livewire component and modular Blade partials |
+| "I need alerts when CPU or RAM spikes" | Scheduled health check with Slack, Telegram, and custom events |
+| "Load balancer needs a health check endpoint" | `GET /corewatch/api/health` returns 200 or 503 |
 
 ### CoreWatch vs. Alternatives
 
@@ -75,47 +75,35 @@ Schedule::command('corewatch:check-health')->everyFiveMinutes();
 
 ---
 
-## 🗺️ System Architecture Flowchart
-
-The following diagram illustrates how CoreWatch isolates data collection, streams log buffers, routes controller requests, and schedules alerting triggers:
+## System Architecture
+ 
+The following diagram illustrates how CoreWatch handles data collection, log streaming, and alert dispatching:
 
 ```mermaid
 graph TD
-    %% Elements
-    A["💻 Master Dashboard View <br> (AlpineJS Client)"]
-    B["🛣️ CoreWatch Routing Gateway <br> (Protected Middleware)"]
-    C["⚙️ SystemMetricsCollector <br> (Clean Architecture Actions)"]
-    D["📄 LogFileRepository <br> (O-1 fseek streaming)"]
-    E["⚡ Whitelisted Services Exec <br> (RCE-Proof Command List)"]
-    F["⏰ Sentinel Health Command <br> (Artisan Cron Daemon)"]
+    A["Dashboard View<br>(Alpine.js)"]
+    B["CoreWatch Routing<br>(Protected Middleware)"]
+    C["SystemMetricsCollector<br>(Metric Actions)"]
+    D["LogFileRepository<br>(Chunked Backward Stream)"]
+    E["Service Actions<br>(Whitelisted Commands)"]
+    F["Health Monitor<br>(Artisan Command)"]
     
-    G["📡 Host System <br> (/proc, top processes, disk filesystem)"]
-    H["💾 Database Engine <br> (MySQL, SQLite, PGSQL Sizing)"]
-    I["💬 DevOps Channels <br> (Slack & Telegram API)"]
+    G["Host System<br>(/proc, processes, disk)"]
+    H["Database<br>(MySQL, PostgreSQL, SQLite)"]
+    I["DevOps Notifications<br>(Slack & Telegram)"]
 
-    %% Styling Definitions
-    classDef primary fill:#0c1528,stroke:#00ccff,stroke-width:2px,color:#fff;
-    classDef secondary fill:#050b18,stroke:#1f2e4d,stroke-width:1px,color:#aaa;
-    classDef alert fill:#0c1528,stroke:#ff3366,stroke-width:2px,color:#fff;
-
-    %% Class Assignments
-    class A,C,D,E primary;
-    class B,G,H secondary;
-    class F,I alert;
-
-    %% Connections
-    A -->|1. Poll Metrics API| B
+    A -->|Poll Metrics API| B
     B --> C
-    C -->|Native Syscalls| G
-    C -->|Schema Sizing| H
-    A -->|2. Stream Log Chunk| B
+    C -->|System Reads| G
+    C -->|Schema Query| H
+    A -->|Stream Logs| B
     B --> D
-    D -->|O-1 Constant Seek Buffer| G
-    A -->|3. Trigger Secure Action| B
+    D -->|Read Log File| G
+    A -->|Run Command| B
     B --> E
-    E -->|Execute Whitelist| G
-    F -->|Resource Threshold Checks| C
-    F -->|Alert Breaches| I
+    E -->|Execute Command| G
+    F -->|Evaluate Thresholds| C
+    F -->|Send Alerts| I
 ```
 
 ---
@@ -151,31 +139,32 @@ CoreWatch separates all diagnostics into elegant, self-contained monospace table
 
 | Partial Blade View Path | Diagnostic Target | Layout Display Style | Customization Purpose |
 | :--- | :--- | :--- | :--- |
-| `partials.cpu` | CPU Cores & Load averages | Monospace UNIX Table | Monitor core load thresholds (1M, 5M, 15M) |
-| `partials.ram` | Physical Memory (RAM) Allocation | Monospace Memory Table | Track active, free, and cached allocation bytes |
-| `partials.disk` | Disk Storage Saturated Volumes | Saturated Space Table | Monitor root storage partition size limits |
-| `partials.processes` | Active CPU Top Linux Processes | Live CLI System Table | Identify high CPU usage processes (PID, User) |
-| `partials.database` | Database Engine & Schema size | Monospace DB Status Table | Track table counts and database file sizes |
-| `partials.app-checks` | Operational Application Integrity | Status Indicator List | Verify Cache, Queue, and Security modes |
-| `partials.specifications` | OS Kernel & Laravel specifications | Static Specs Table | Quick access to PHP, OS, and server version info |
-| `partials.services` | Whitelisted system task controls | Command Action Table | Safe execution of authorized terminal commands |
-| `partials.logs` | Live chunked stream terminal view | Cyberpunk Log Console | View and filter real-time logs with pagination |
+| `partials.cpu` | CPU Cores & Load averages | Monospace Table | Monitor core load thresholds (1m, 5m, 15m) |
+| `partials.ram` | System Memory (RAM) Allocation | Monospace Table | Track allocated, free, and available memory |
+| `partials.disk` | Disk Storage & Volumes | Space Usage Table | Monitor root storage partition size limits |
+| `partials.processes` | Top Linux processes | Process Table | Identify high CPU & memory processes |
+| `partials.database` | Database engine & size | DB Status Table | Track table counts and database size |
+| `partials.app-checks` | Application health checks | Status Indicator List | Verify Cache, Queue, and Security modes |
+| `partials.specifications` | Host specifications | Specs Table | Display PHP, OS, and server version info |
+| `partials.services` | Whitelisted service controls | Action Table | Safe execution of authorized commands |
+| `partials.logs` | Live log stream | Log Console | View and filter real-time logs with pagination |
 
 ---
 
-## ⚡ Key Highlights
-1. **Stealthy & Dynamic UI:** Self-contained Blade views styled with a premium Cyberpunk DevOps dark theme. Uses lightweight Tailwind CSS & AlpineJS for dynamic reactivity without bundler dependencies.
-2. **Zero-overhead Log Viewer:** An advanced, memory-efficient backward-seeking chunked file parser that streams Laravel/Nginx/Apache logs without memory exhaustion even on multi-gigabyte files.
-3. **Advanced System Diagnostics:** Native `/proc` filesystem parsing coupled with fast system command fallbacks to deliver instant CPU, RAM, Disk, and system uptime metrics.
-4. **Pre-Whitelisted Services Controller:** Safe administrative triggers (e.g. queue restart, redis flush, cache clearing) mapping to strict command keys preventing arbitrary RCE vulnerabilities.
-5. **Top Active CPU Processes:** Live sorted process statistics terminal displaying CPU load, RAM allocation, PID, user, and running commands on Linux hosts.
-6. **Database Telemetry Widget:** Direct schema capacity details, connection indicators, and tables count monitoring for MySQL, PostgreSQL, and SQLite database connection engines.
-7. **App Integrity Checks:** Automated operational verification for Cache drivers, Artisan Queue connections, Environment status, and Security debug mode states.
-8. **Livewire Embed Support:** Built-in dynamic Livewire component (`livewire:corewatch-dashboard`) for drag-and-drop embedding inside administrative panels like **Filament** and **Laravel Nova**.
-9. **Continuous Sentinel Daemon:** Scheduled console monitor (`corewatch:check-health`) that alerts your DevOps channels (Slack & Telegram) when resource thresholds are breached.
-10. **Developer Facade API:** `CoreWatch::metrics()`, `CoreWatch::health()`, and `ThresholdBreached` events for custom integrations.
-11. **One-Command Install:** `php artisan corewatch:install` publishes config and prints your production checklist.
-12. **Health Probe Endpoint:** `GET /corewatch/api/health` for uptime monitors, load balancers, and Kubernetes liveness probes.
+## Key Highlights
+
+1. **Light & Dark Theme UI:** Self-contained Blade views with built-in Light and Dark themes. Built with Tailwind CSS and Alpine.js with zero bundler dependencies.
+2. **Memory-Safe Log Streaming:** Streams Laravel, Nginx, and Apache log files using backward chunked seeks ($O(1)$ memory usage) even on multi-gigabyte log files.
+3. **Low-Overhead System Metrics:** Reads `/proc` directly with shell command fallbacks to report CPU load, RAM allocation, disk capacity, and uptime.
+4. **Whitelisted Service Controls:** Safe execution of pre-configured administrative commands (queue restart, cache clearing) mapped to strict keys to prevent arbitrary command execution.
+5. **Top Active Processes:** Displays active Linux processes sorted by CPU and memory usage with PID and owner.
+6. **Database Telemetry:** Shows connection status, table count, and estimated database size for MySQL, PostgreSQL, and SQLite.
+7. **Application Integrity Checks:** Verifies cache store, queue driver, environment, and debug mode status.
+8. **Livewire & Filament Support:** Includes a Livewire component (`<livewire:corewatch-dashboard />`) for embedding into Filament and custom admin panels.
+9. **Scheduled Health Alerts:** Background command (`corewatch:check-health`) that evaluates resource limits and dispatches alerts to Slack, Telegram, or custom event listeners.
+10. **Developer Facade API:** Access metrics programmatically via the `CoreWatch` facade (`CoreWatch::metrics()`, `CoreWatch::health()`).
+11. **One-Command Install:** `php artisan corewatch:install` publishes configuration and displays a production checklist.
+12. **Health Probe Endpoint:** Built-in JSON health endpoint for load balancers (`/corewatch/api/health`) and Prometheus metric exporter (`/corewatch/api/metrics/prometheus`).
 
 ---
 
@@ -209,37 +198,36 @@ php artisan corewatch:install
 
 ---
 
-## 🔌 Flexible Dashboard Integration Options
+## Integration Options
 
-CoreWatch is designed to fit seamlessly wherever your administration operations are managed:
+CoreWatch supports multiple integration methods:
 
 > [!TIP]
-> Make sure to wrap any custom page elements that use these modular tables inside the parent AlpineJS data controller: `<div x-data="corewatchDashboard()">...</div>`.
+> When including modular partials in a custom page, wrap them in the parent Alpine.js controller: `<div x-data="corewatchDashboard()">...</div>`.
 
-### Option A: Standalone Routed View
-Once active, navigate directly to `/corewatch` to view the comprehensive Cyberpunk DevOps terminal.
+### Option A: Standalone Route
+Navigate directly to `/corewatch` to access the full dashboard.
 
-### Option B: Modular Table Includes
-Publish the views and embed specific partial views inside your existing administrative panels:
+### Option B: Modular Partials
+Publish the views and embed specific partials inside existing administrative pages:
 
 ```html
 <div x-data="corewatchDashboard()">
     <div class="grid grid-cols-2 gap-4">
-        <!-- Render CPU and Database tables directly -->
         @include('corewatch::partials.cpu')
         @include('corewatch::partials.database')
     </div>
 </div>
 ```
 
-### Option C: Blade Custom Component Embeds
-Embed the full dashboard seamlessly:
+### Option C: Blade Component
+Embed the dashboard view directly:
 
 ```html
 <x-corewatch-views::dashboard />
 ```
 
-### Option D: Livewire Drag-and-Drop
+### Option D: Livewire Component
 Embed the Livewire component in Filament dashboards or custom panels:
 
 ```html
@@ -248,7 +236,7 @@ Embed the Livewire component in Filament dashboards or custom panels:
 
 ---
 
-## ⚙️ Threshold Sentinel alerts Alerting
+## ⚙️ Thresholds & Alerting
 
 Enable real-time warnings on Slack or Telegram by configuring your host `.env`:
 
@@ -260,6 +248,9 @@ COREWATCH_SLACK_CHANNEL="#devops-alerts"
 # Telegram Alerts Configuration
 COREWATCH_TELEGRAM_BOT_TOKEN="0000000000:AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA"
 COREWATCH_TELEGRAM_CHAT_ID="-1000000000000"
+
+# Background Queued Delivery (optional: true or specific queue name)
+COREWATCH_NOTIFICATIONS_QUEUE=default
 ```
 
 Register heartbeat and health checks in `routes/console.php`:
@@ -269,6 +260,18 @@ use Illuminate\Support\Facades\Schedule;
 
 Schedule::command('corewatch:heartbeat')->everyMinute();
 Schedule::command('corewatch:check-health')->everyFiveMinutes();
+```
+
+### Diagnostic & Operational Commands
+
+Verify your deployment and alert pipelines via Artisan:
+
+```bash
+# Run comprehensive environment and health audit
+php artisan corewatch:doctor
+
+# Test alert delivery through configured Slack/Telegram channels
+php artisan corewatch:test-alert
 ```
 
 ---
@@ -291,6 +294,9 @@ $disk = CoreWatch::disk();
 // Lightweight health check (for uptime monitors)
 $health = CoreWatch::health();
 // ['status' => 'healthy', 'healthy' => true, 'checks' => [...], 'timestamp' => '...']
+
+// Run system diagnostics
+$diagnostics = CoreWatch::doctor();
 
 // Read logs programmatically
 $logs = CoreWatch::readLogs('laravel', page: 1);
