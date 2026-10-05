@@ -36,9 +36,9 @@ final class CheckHealthCommand extends Command
             $this->table(
                 ['Resource', 'Current Usage', 'Alert Threshold', 'Status'],
                 [
-                    ['CPU', $result['cpu']['usage_percentage'].'%', $thresholds['cpu'].'%', 'OK ✅'],
-                    ['RAM', $result['ram']['usage_percentage'].'%', $thresholds['ram'].'%', 'OK ✅'],
-                    ['Disk', $result['disk']['usage_percentage'].'%', $thresholds['disk'].'%', 'OK ✅'],
+                    ['CPU', $result['cpu']['usage_percentage'].'%', $thresholds['cpu'].'%', 'OK'],
+                    ['RAM', $result['ram']['usage_percentage'].'%', $thresholds['ram'].'%', 'OK'],
+                    ['Disk', $result['disk']['usage_percentage'].'%', $thresholds['disk'].'%', 'OK'],
                 ]
             );
         }
@@ -57,7 +57,7 @@ final class CheckHealthCommand extends Command
                 $alert->name,
                 $alert->current,
                 $alert->threshold,
-                strtoupper($alert->severity->value).' ⚠️',
+                strtoupper($alert->severity->value),
                 $alert->details,
             ];
         }

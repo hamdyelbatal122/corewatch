@@ -24,15 +24,25 @@ final class FailedJobsRepository
             ];
         }
 
-        $count = (int) DB::table('failed_jobs')->count();
-        $active = $count === 0;
+        try {
+            $count = (int) DB::table('failed_jobs')->count();
+            $active = $count === 0;
 
-        return [
-            'available' => true,
-            'count' => $count,
-            'status' => $active ? 'Clear ✅' : "{$count} Failed ⚠️",
-            'active' => $active,
-            'detail' => $active ? 'No failed queue jobs' : 'Review failed jobs in Horizon or artisan queue:failed',
-        ];
+            return [
+                'available' => true,
+                'count' => $count,
+                'status' => $active ? 'Clear' : "{$count} Failed",
+                'active' => $active,
+                'detail' => $active ? 'No failed queue jobs' : 'Review failed jobs in Horizon or artisan queue:failed',
+            ];
+        } catch (\Throwable $e) {
+            return [
+                'available' => true,
+                'count' => 0,
+                'status' => 'Error',
+                'active' => false,
+                'detail' => $e->getMessage(),
+            ];
+        }
     }
 }

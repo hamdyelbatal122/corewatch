@@ -20,13 +20,22 @@ final class SslCertificateCollector
             ];
         }
 
+        if (! extension_loaded('openssl')) {
+            return [
+                'enabled' => true,
+                'status' => 'Disabled',
+                'active' => false,
+                'detail' => 'OpenSSL PHP extension is not installed or enabled',
+            ];
+        }
+
         $host = config('corewatch.ssl.host') ?: parse_url((string) config('app.url'), PHP_URL_HOST);
 
         if (empty($host) || in_array($host, ['localhost', '127.0.0.1'], true)) {
             return [
                 'enabled' => true,
                 'host' => $host ?: 'unknown',
-                'status' => 'Skipped 🏠',
+                'status' => 'Skipped',
                 'active' => true,
                 'detail' => 'SSL check skipped for local development hosts',
             ];
@@ -49,7 +58,7 @@ final class SslCertificateCollector
                 return [
                     'enabled' => true,
                     'host' => $host,
-                    'status' => 'Unreachable ❌',
+                    'status' => 'Unreachable',
                     'active' => false,
                     'detail' => $errstr ?: "Could not connect to ssl://{$host}:{$port}",
                 ];
@@ -63,7 +72,7 @@ final class SslCertificateCollector
                 return [
                     'enabled' => true,
                     'host' => $host,
-                    'status' => 'Invalid ❌',
+                    'status' => 'Invalid',
                     'active' => false,
                     'detail' => 'Could not parse SSL certificate',
                 ];
@@ -74,7 +83,7 @@ final class SslCertificateCollector
             $expiresFormatted = date('Y-m-d', $expiresAt);
 
             $active = $daysLeft > $warningDays;
-            $status = $daysLeft <= 0 ? 'Expired ❌' : ($daysLeft <= $warningDays ? "Expiring in {$daysLeft}d ⚠️" : 'Valid ✅');
+            $status = $daysLeft <= 0 ? 'Expired' : ($daysLeft <= $warningDays ? "Expiring in {$daysLeft}d" : 'Valid');
 
             return [
                 'enabled' => true,
@@ -90,7 +99,7 @@ final class SslCertificateCollector
             return [
                 'enabled' => true,
                 'host' => $host,
-                'status' => 'Error ❌',
+                'status' => 'Error',
                 'active' => false,
                 'detail' => $e->getMessage(),
             ];

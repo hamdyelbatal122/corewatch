@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch\Infrastructure\Collectors;
 
-use Exception;
 use Hamzi\CoreWatch\Contracts\ShellExecutorInterface;
 use Hamzi\CoreWatch\Support\ByteFormatter;
+use RuntimeException;
+use Throwable;
 
 final class DiskMetricsCollector
 {
@@ -26,9 +27,9 @@ final class DiskMetricsCollector
             $free = (float) @disk_free_space($path);
 
             if ($total <= 0) {
-                throw new Exception('Native disk metrics returned zero or are restricted.');
+                throw new RuntimeException('Native disk metrics returned zero or are restricted.');
             }
-        } catch (Exception) {
+        } catch (Throwable) {
             $total = 1.0;
             $free = 1.0;
             $result = $this->shell->run('df -P '.escapeshellarg($path));
@@ -36,7 +37,7 @@ final class DiskMetricsCollector
                 $lines = explode("\n", trim($result['output']));
                 if (count($lines) >= 2) {
                     $parts = preg_split('/\s+/', $lines[1]);
-                    if (count($parts) >= 6) {
+                    if (is_array($parts) && count($parts) >= 6) {
                         $total = (float) $parts[1] * 1024;
                         $free = (float) $parts[3] * 1024;
                     }

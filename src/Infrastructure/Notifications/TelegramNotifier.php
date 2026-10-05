@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch\Infrastructure\Notifications;
 
-use Exception;
 use Hamzi\CoreWatch\Contracts\AlertNotifierInterface;
 use Illuminate\Support\Facades\Http;
 
@@ -19,11 +18,11 @@ final class TelegramNotifier implements AlertNotifierInterface
             return false;
         }
 
-        $message = "<b>⚠️ CoreWatch Alert Breach ⚠️</b>\n\n";
+        $message = "<b>CoreWatch Alert</b>\n\n";
         $message .= "<b>Host:</b> <code>{$systemInfo['hostname']}</code>\n";
         $message .= '<b>Env:</b> <code>'.app()->environment()."</code>\n";
         $message .= "<b>OS:</b> <code>{$systemInfo['os']}</code>\n\n";
-        $message .= "<b>Resource Violations:</b>\n";
+        $message .= "<b>Resource Alerts:</b>\n";
 
         foreach ($alerts as $alert) {
             $message .= "• <b>{$alert->name}</b>\n";
@@ -31,7 +30,7 @@ final class TelegramNotifier implements AlertNotifierInterface
             $message .= "  Info: <i>{$alert->details}</i>\n\n";
         }
 
-        $message .= '📅 <i>'.now()->toCookieString().'</i>';
+        $message .= '<i>'.now()->toCookieString().'</i>';
 
         try {
             $url = "https://api.telegram.org/bot{$botToken}/sendMessage";
@@ -42,7 +41,7 @@ final class TelegramNotifier implements AlertNotifierInterface
             ]);
 
             return true;
-        } catch (Exception) {
+        } catch (\Throwable) {
             return false;
         }
     }

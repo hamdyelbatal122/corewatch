@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch\Infrastructure\Notifications;
 
-use Exception;
 use Hamzi\CoreWatch\Contracts\AlertNotifierInterface;
 use Illuminate\Support\Facades\Http;
 
@@ -22,8 +21,7 @@ final class SlackNotifier implements AlertNotifierInterface
                 'type' => 'header',
                 'text' => [
                     'type' => 'plain_text',
-                    'text' => '🚨 CoreWatch Server Alert Breach 🚨',
-                    'emoji' => true,
+                    'text' => 'CoreWatch Server Alert',
                 ],
             ],
             [
@@ -44,7 +42,7 @@ final class SlackNotifier implements AlertNotifierInterface
                 'text' => [
                     'type' => 'mrkdwn',
                     'text' => sprintf(
-                        "⚠️ *%s* has breached limits!\n*Current Usage:* `%s` (Threshold: `%s`)\n*Details:* _%s_",
+                        "*%s* has exceeded threshold!\n*Current Usage:* `%s` (Threshold: `%s`)\n*Details:* _%s_",
                         $alert->name,
                         $alert->current,
                         $alert->threshold,
@@ -60,19 +58,19 @@ final class SlackNotifier implements AlertNotifierInterface
             'elements' => [
                 [
                     'type' => 'mrkdwn',
-                    'text' => 'CoreWatch DevOps Sentinel • '.now()->toCookieString(),
+                    'text' => 'CoreWatch - '.now()->toCookieString(),
                 ],
             ],
         ];
 
         try {
             Http::post($webhookUrl, [
-                'text' => 'CoreWatch Alert Breach: Server resource thresholds exceeded!',
+                'text' => 'CoreWatch Alert: Server resource thresholds exceeded.',
                 'blocks' => $blocks,
             ]);
 
             return true;
-        } catch (Exception) {
+        } catch (\Throwable) {
             return false;
         }
     }

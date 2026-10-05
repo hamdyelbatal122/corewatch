@@ -14,21 +14,35 @@ final readonly class DashboardConfigDto
      */
     public static function fromConfig(): array
     {
-        $services = collect(config('corewatch.services', []))
-            ->filter(fn (array $service) => ($service['enabled'] ?? true) === true)
-            ->map(fn (array $service, string $key) => ['key' => $key, 'name' => $service['name']])
-            ->values()
-            ->all();
+        /** @var array<string, array{name: string, command: string, type: string, enabled?: bool}> $configuredServices */
+        $configuredServices = config('corewatch.services', []);
+
+        $services = [];
+        foreach ($configuredServices as $key => $service) {
+            if (($service['enabled'] ?? true) === true) {
+                $services[] = [
+                    'key' => $key,
+                    'name' => $service['name'],
+                ];
+            }
+        }
+
+        /** @var array<string, array{name: string, path: string, type: string}> $configuredLogs */
+        $configuredLogs = config('corewatch.logs.files', []);
+
+        $logs = [];
+        foreach ($configuredLogs as $key => $log) {
+            $logs[] = [
+                'key' => $key,
+                'name' => $log['name'],
+            ];
+        }
 
         return [
             'refresh_interval' => config('corewatch.refresh_interval', 5000),
             'widgets' => config('corewatch.widgets', []),
             'services' => $services,
-            'logs' => array_map(
-                fn ($key, $log) => ['key' => $key, 'name' => $log['name']],
-                array_keys(config('corewatch.logs.files', [])),
-                config('corewatch.logs.files', [])
-            ),
+            'logs' => $logs,
             'locale' => app()->getLocale(),
             'labels' => Translation::all(),
             'version' => PackageVersion::current(),

@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch\Infrastructure\Shell;
 
-use Exception;
 use Hamzi\CoreWatch\Contracts\ShellExecutorInterface;
 use Illuminate\Support\Facades\Process;
+use Throwable;
 
 final class LaravelShellExecutor implements ShellExecutorInterface
 {
@@ -23,7 +23,7 @@ final class LaravelShellExecutor implements ShellExecutorInterface
                 'success' => $processResult->successful(),
                 'output' => $processResult->output().$processResult->errorOutput(),
             ];
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return [
                 'success' => false,
                 'output' => $e->getMessage(),
@@ -33,9 +33,13 @@ final class LaravelShellExecutor implements ShellExecutorInterface
 
     public function isDisabled(): bool
     {
-        $disabledFunctions = explode(',', ini_get('disable_functions'));
+        $ini = ini_get('disable_functions');
+        if (! is_string($ini) || trim($ini) === '') {
+            return false;
+        }
+
+        $disabledFunctions = explode(',', strtolower($ini));
         $disabledFunctions = array_map('trim', $disabledFunctions);
-        $disabledFunctions = array_map('strtolower', $disabledFunctions);
 
         return in_array('exec', $disabledFunctions, true)
             || in_array('shell_exec', $disabledFunctions, true)

@@ -1,6 +1,6 @@
 # Filament Integration Guide
 
-CoreWatch integrates seamlessly with [Filament](https://filamentphp.com/) admin panels.
+CoreWatch integrates with [Filament](https://filamentphp.com/) admin panels.
 
 ## Option 1: Livewire Component (Recommended)
 

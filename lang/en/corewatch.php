@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 return [
     'title' => 'COREWATCH',
-    'subtitle' => 'Stealthy DevOps & Real-time Server Health Monitor',
+    'subtitle' => 'Real-time server metrics and operations dashboard for Laravel',
     'polling_active' => 'Polling Active',
     'polling_suspended' => 'Polling Suspended',
     'uptime' => 'UPTIME',

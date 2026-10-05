@@ -203,7 +203,7 @@ final class LogFileRepository implements LogReaderInterface
                 return [
                     'date' => $dateStr,
                     'level' => strtoupper($matches['level']),
-                    'ip' => $matches['ip'],
+                    'ip' => ! empty($matches['ip']) ? $matches['ip'] : null,
                     'message' => trim($matches['message']),
                     'raw' => $line,
                 ];
@@ -213,6 +213,9 @@ final class LogFileRepository implements LogReaderInterface
         return null;
     }
 
+    /**
+     * @param  array<string, mixed>  $entry
+     */
     private function matchesFilters(array $entry, LogFilterDto $filters): bool
     {
         if ($filters->level !== null) {

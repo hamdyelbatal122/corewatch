@@ -10,10 +10,10 @@
     <div class="flex flex-wrap items-center gap-2 sm:gap-3">
         <div class="cw-theme-toggle">
             <button type="button" @click="setTheme('light')" class="cw-theme-btn" :class="theme === 'light' && 'active'">
-                ☀ Light
+                Light
             </button>
             <button type="button" @click="setTheme('dark')" class="cw-theme-btn" :class="theme === 'dark' && 'active'">
-                🌙 Dark
+                Dark
             </button>
         </div>
 

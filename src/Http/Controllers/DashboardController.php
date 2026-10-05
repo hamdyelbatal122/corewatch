@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch\Http\Controllers;
 
-use Exception;
 use Hamzi\CoreWatch\Application\Actions\ExecuteServiceCommandAction;
 use Hamzi\CoreWatch\Application\Actions\GetServerMetricsAction;
 use Hamzi\CoreWatch\Application\Actions\ParseLogFileAction;
@@ -15,6 +14,7 @@ use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Throwable;
 
 final class DashboardController extends Controller
 {
@@ -38,7 +38,7 @@ final class DashboardController extends Controller
                 'success' => true,
                 'metrics' => $this->getMetrics->execute(),
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -58,7 +58,7 @@ final class DashboardController extends Controller
             if (! empty($parsedData['not_found'])) {
                 return response()->json([
                     'success' => false,
-                    'error' => $parsedData['error'],
+                    'error' => $parsedData['error'] ?? 'Log file not found.',
                 ], 404);
             }
 
@@ -67,11 +67,11 @@ final class DashboardController extends Controller
                 'logs' => $parsedData['logs'],
                 'has_more' => $parsedData['has_more'],
                 'total_scanned' => $parsedData['total_scanned'],
-                'file_name' => $parsedData['file_name'],
-                'file_path' => $parsedData['file_path'],
+                'file_name' => $parsedData['file_name'] ?? '',
+                'file_path' => $parsedData['file_path'] ?? '',
                 'error' => $parsedData['error'] ?? null,
             ]);
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             return response()->json([
                 'success' => false,
                 'error' => $e->getMessage(),
@@ -90,7 +90,7 @@ final class DashboardController extends Controller
         if (! empty($result['not_found']) || ! empty($result['disabled'])) {
             return response()->json([
                 'success' => false,
-                'error' => $result['error'],
+                'error' => $result['error'] ?? 'Service command unavailable.',
             ], 400);
         }
 

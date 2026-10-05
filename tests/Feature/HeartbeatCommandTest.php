@@ -20,6 +20,6 @@ final class HeartbeatCommandTest extends TestCase
         $status = $collector->collect();
 
         $this->assertTrue($status['active']);
-        $this->assertSame('Scheduler Active ✅', $status['status']);
+        $this->assertSame('Scheduler Active', $status['status']);
     }
 }

@@ -1,4 +1,4 @@
-# Contributing to CoreWatch 🚀
+# Contributing to CoreWatch
 
 First off, thank you for considering contributing to CoreWatch! It is people like you who make open source such a fantastic environment to learn, inspire, and create.
 
@@ -6,7 +6,7 @@ Here are the guidelines to help make the contribution process clear and effectiv
 
 ---
 
-## 🛠️ Local Development Workflow
+## Local Development Workflow
 
 To begin developing on CoreWatch, follow these steps:
 
@@ -45,9 +45,9 @@ vendor/bin/pint
 
 ---
 
-## 📬 Pull Request Guidelines
+## Pull Request Guidelines
 
-To keep the codebase clean, robust, and reliable, please ensure your PRs adhere to these guidelines:
+To keep the codebase clean, maintainable, and reliable, please ensure your PRs adhere to these guidelines:
 
 1. **Strict Typing:** All new classes and files MUST declare strict typing at the very top:
    ```php
@@ -67,6 +67,6 @@ To keep the codebase clean, robust, and reliable, please ensure your PRs adhere 
 
 ---
 
-## 🐞 Reporting Security Vulnerabilities
+## Reporting Security Vulnerabilities
 
 If you discover a security vulnerability within CoreWatch, please send an e-mail to **hamdyelbatal122@hamzi.dev** instead of opening a public issue. All security vulnerabilities will be addressed immediately.

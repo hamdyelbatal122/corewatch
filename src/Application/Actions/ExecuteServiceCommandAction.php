@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch\Application\Actions;
 
-use Exception;
 use Hamzi\CoreWatch\Contracts\ShellExecutorInterface;
 use Hamzi\CoreWatch\Infrastructure\Audit\ServiceAuditLogger;
 use Hamzi\CoreWatch\Support\Translation;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Process;
+use Throwable;
 
 final class ExecuteServiceCommandAction
 {
@@ -71,7 +71,7 @@ final class ExecuteServiceCommandAction
                 'service' => $service['name'],
                 'output' => trim($output) ?: 'Command completed successfully (no output).',
             ];
-        } catch (Exception $e) {
+        } catch (Throwable $e) {
             $this->auditLogger->log($serviceKey, $service['name'], false, $userId, $ip);
 
             return [

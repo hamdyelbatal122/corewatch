@@ -35,7 +35,7 @@ final class ProcessCollector
                 continue;
             }
             $parts = preg_split('/\s+/', $line, 5);
-            if (count($parts) >= 5) {
+            if (is_array($parts) && count($parts) >= 5) {
                 $processes[] = [
                     'cpu' => $parts[0].'%',
                     'mem' => $parts[1].'%',

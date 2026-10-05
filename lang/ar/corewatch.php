@@ -3,8 +3,8 @@
 declare(strict_types=1);
 
 return [
-    'title' => 'كور ووتش',
-    'subtitle' => 'لوحة DevOps خفية لمراقبة صحة السيرفر في الوقت الفعلي',
+    'title' => 'CoreWatch',
+    'subtitle' => 'مراقبة صحة الخادم وعمليات التشغيل في الوقت الفعلي لتطبيقات لارافيل',
     'polling_active' => 'التحديث التلقائي نشط',
     'polling_suspended' => 'التحديث التلقائي متوقف',
     'uptime' => 'مدة التشغيل',

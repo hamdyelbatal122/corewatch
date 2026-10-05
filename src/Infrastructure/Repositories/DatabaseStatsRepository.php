@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Hamzi\CoreWatch\Infrastructure\Repositories;
 
-use Exception;
 use Hamzi\CoreWatch\Contracts\DatabaseStatsRepositoryInterface;
 use Hamzi\CoreWatch\Support\ByteFormatter;
 use Illuminate\Support\Facades\DB;
@@ -43,15 +42,15 @@ final class DatabaseStatsRepository implements DatabaseStatsRepositoryInterface
                 'driver' => strtoupper($driver),
                 'tables_count' => $tablesCount,
                 'size_formatted' => ByteFormatter::format($sizeBytes),
-                'connection' => 'Connected ✅',
+                'connection' => 'Connected',
                 'active' => true,
             ];
-        } catch (Exception) {
+        } catch (\Throwable) {
             return [
                 'driver' => 'Unknown',
                 'tables_count' => 0,
                 'size_formatted' => '0 B',
-                'connection' => 'Disconnected ❌',
+                'connection' => 'Disconnected',
                 'active' => false,
             ];
         }

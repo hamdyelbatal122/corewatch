@@ -51,10 +51,12 @@ final class RamMetricsCollector
                 foreach ($lines as $line) {
                     if (str_starts_with(strtolower($line), 'mem:')) {
                         $parts = preg_split('/\s+/', $line);
-                        $total = (int) ($parts[1] ?? 0);
-                        $free = (int) ($parts[3] ?? 0);
-                        $available = (int) ($parts[6] ?? ($free + ($parts[4] ?? 0) + ($parts[5] ?? 0)));
-                        break;
+                        if (is_array($parts)) {
+                            $total = (int) ($parts[1] ?? 0);
+                            $free = (int) ($parts[3] ?? 0);
+                            $available = isset($parts[6]) ? (int) $parts[6] : ($free + (int) ($parts[4] ?? 0) + (int) ($parts[5] ?? 0));
+                            break;
+                        }
                     }
                 }
             }

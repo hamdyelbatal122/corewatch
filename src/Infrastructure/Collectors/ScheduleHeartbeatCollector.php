@@ -30,7 +30,7 @@ final class ScheduleHeartbeatCollector
         if ($lastBeat === null) {
             return [
                 'enabled' => true,
-                'status' => 'No Heartbeat ⚠️',
+                'status' => 'No Heartbeat',
                 'active' => false,
                 'detail' => 'Add Schedule::command(\'corewatch:heartbeat\')->everyMinute() to routes/console.php',
             ];
@@ -44,7 +44,7 @@ final class ScheduleHeartbeatCollector
             'enabled' => true,
             'last_heartbeat' => $lastBeatAt->toIso8601String(),
             'minutes_ago' => $minutesAgo,
-            'status' => $active ? 'Scheduler Active ✅' : 'Scheduler Stale ❌',
+            'status' => $active ? 'Scheduler Active' : 'Scheduler Stale',
             'active' => $active,
             'detail' => $active
                 ? "Last heartbeat {$minutesAgo} minute(s) ago"

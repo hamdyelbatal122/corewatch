@@ -16,10 +16,8 @@ final class InstallCommand extends Command
 
     public function handle(): int
     {
-        $this->components->info('Installing CoreWatch DevOps Sentinel...');
+        $this->components->info('Installing CoreWatch...');
         $this->newLine();
-
-        $configFlag = $this->option('force') ? '--force' : '';
         $this->call('vendor:publish', [
             '--tag' => 'corewatch-config',
             '--force' => $this->option('force'),
