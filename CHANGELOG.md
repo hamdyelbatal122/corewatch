@@ -14,7 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [2.2.0] - 2026-10-05
 
 ## Summary
-Release 2.2.0 delivers diagnostic tooling, asynchronous background alert queuing, static analysis upgrades to PHPStan Level 8, and enhanced system resilience with strict Throwable exception handling across all collectors and repositories.
+Release 2.2.0 introduces system diagnostic tooling, asynchronous background alert queuing, static analysis upgrades to PHPStan Level 8, and enhanced system resilience with strict Throwable exception handling across all collectors and repositories.
 
 ## Changes
 - Added `SystemDoctor` service and `php artisan corewatch:doctor` command for comprehensive server diagnostics across System, Database, Cache, Queue, Scheduler, Alerts, and Security.
@@ -26,179 +26,194 @@ Release 2.2.0 delivers diagnostic tooling, asynchronous background alert queuing
 - Resolved Composer dependency security advisories and expanded test suite to 32 tests with 211 assertions.
 - Enforced clean code standards and removed emoji artifacts across all code, commands, and repository documentation.
 
-### Changed
-- Re-added dashboard preview screenshot after remote folder deletion
+---
+
+## [2.1.7] - 2026-06-06
+
+## Summary
+Patch release restoring repository assets and visual documentation for package consumers.
+
+## Changes
+- Restored dashboard preview screenshot in visual documentation (`docs/images/dashboard-preview.png`).
 
 ---
 
 ## [2.1.6] - 2026-06-05
 
-### Changed
-- Updated README dashboard preview screenshot (`docs/images/dashboard-preview.png`)
+## Summary
+Documentation asset refresh updating the visual overview of the operational interface.
+
+## Changes
+- Updated README dashboard preview screenshot (`docs/images/dashboard-preview.png`) to reflect current user interface styling.
 
 ---
 
 ## [2.1.5] - 2026-06-05
 
-### Fixed
-- Duplicate `v` in version badge (`vv2.1.4`) — UI now displays Composer version as-is without an extra prefix
+## Summary
+Display fix correcting version string formatting within the dashboard header.
+
+## Changes
+- Fixed duplicate version prefix rendering (`vv2.1.4`) by displaying Composer version string directly without redundant prefixing.
 
 ---
 
 ## [2.1.4] - 2026-06-05
 
-### Fixed
-- `PackageVersion` PHP 8.2 compatibility (remove typed class constant)
+## Summary
+Runtime compatibility hotfix ensuring uninterrupted support across PHP 8.2 environments.
+
+## Changes
+- Removed typed class constant from `PackageVersion` helper to maintain compatibility across supported PHP 8.2 runtimes.
 
 ---
 
 ## [2.1.3] - 2026-06-05
 
-### Added
-- `PackageVersion` helper — dashboard version is read automatically from Composer
+## Summary
+Compatibility release adding Livewire 4 support and streamlining header interface elements.
 
-### Changed
-- Allow `livewire/livewire` ^3.4 or ^4.0 in dev dependencies
-- Removed CW logo box from header; removed broken icon next to RE-POLL button
-
-### Fixed
-- Livewire 4 compatibility: defer component registration until `livewire.finder` is bound (fixes CI/test boot errors)
+## Changes
+- Added `PackageVersion` helper to resolve active installed package version directly from Composer metadata.
+- Added compatibility support for `livewire/livewire` ^3.4 and ^4.0 in dev dependencies.
+- Deferred Livewire component registration until container resolves `livewire.finder` to prevent boot errors in testing environments.
+- Cleaned header interface by removing redundant visual boxes and unrendered icons.
 
 ---
 
 ## [2.1.2] - 2026-06-05
 
-### Changed
-- Redesigned dashboard with a unified design system (`.cw-*` components)
-- Added Light / Dark theme toggle with `localStorage` persistence and system preference fallback
-- Reorganized layout: System Metrics → Health & Operations → Infrastructure → Service Controls → Log Stream
-- CPU, RAM, and Disk cards now include progress bars and threshold-based alerts
-- Updated logs terminal, service controls, and output modal for both themes
+## Summary
+Visual and thematic overhaul introducing unified component design system and full light/dark theme support.
+
+## Changes
+- Redesigned interface using a structured component system (`.cw-*` class naming).
+- Added persistent Light and Dark theme toggle with system preference fallback and localStorage storage.
+- Restructured dashboard sections: System Metrics, Health and Operations, Infrastructure, Service Controls, and Log Stream.
+- Added visual progress indicators and threshold alert states to CPU, RAM, and Disk metric cards.
+- Updated styling across log terminal, service command controls, and output modals for both color themes.
 
 ---
 
 ## [2.1.1] - 2026-06-05
 
-### Fixed
-- Translation keys (`corewatch::title`, etc.) no longer appear in the UI when lang files are missing
-- Added `Translation` helper with English fallbacks and `@cw` Blade directive
-- Frontend labels passed via `config.labels` for Alpine.js dynamic text
-- Disk workspace path truncation improved (`break-all` + wider column)
-- Process table PID/CPU/MEM column alignment (`tabular-nums`)
-- Renamed redundant "Total Tables Count" to "Table Count"
+## Summary
+Hotfix addressing localization resolution and visual column alignment across monitoring panels.
+
+## Changes
+- Prevented raw translation keys from rendering in dashboard views when language files are not published.
+- Added `Translation` helper with built-in English fallbacks and `@cw` Blade directive.
+- Bound frontend labels to Alpine.js configuration object for reactive localized text rendering.
+- Improved workspace path display on disk storage cards to avoid aggressive truncation.
+- Standardized tabular numeral alignment for process table metrics (PID, CPU, and Memory).
+- Renamed redundant database metric label from "Total Tables Count" to "Table Count".
 
 ---
 
 ## [2.1.0] - 2026-06-05
 
-### Added
-- PHPStan/Larastan static analysis (level 5) with CI job
-- Dependabot and automated release workflow on tag push
-- Prometheus metrics endpoint: `GET /corewatch/api/metrics/prometheus`
-- `corewatch:heartbeat` command for scheduler monitoring
-- SSL certificate expiry collector with configurable warning threshold
-- Failed queue jobs monitor (`failed_jobs` table)
-- Operations Insights dashboard widget (SSL, jobs, scheduler)
-- Service command audit logging with configurable log channel
-- API rate limiting (`throttle:corewatch`)
-- Metrics response caching (`COREWATCH_METRICS_CACHE_TTL`)
-- Arabic (`ar`) and English (`en`) translations
-- `docs/DEPLOYMENT.md` and dashboard preview screenshot
-- `CoreWatchAuthorizer` shared between HTTP middleware and Livewire
-- Expanded test suite (18 tests)
+## Summary
+Major feature release adding Prometheus metric export, SSL certificate monitoring, failed queue jobs tracking, scheduler heartbeat detection, and Arabic localization.
 
-### Changed
-- Dangerous shell commands (`redis_flush`, `supervisor_restart`, `opcache_reset`) disabled by default
-- Dashboard only lists enabled service commands in UI
-- Install command now documents heartbeat, Prometheus, and scheduler setup
-
-### Security
-- Audit trail for all whitelisted service command executions
-- Rate limiting on all CoreWatch API routes
+## Changes
+- Added Prometheus metrics export endpoint at `/corewatch/api/metrics/prometheus`.
+- Added SSL certificate expiration collector with configurable warning threshold.
+- Added failed queue jobs monitor probing the `failed_jobs` table.
+- Added `corewatch:heartbeat` command and scheduler heartbeat tracking widget.
+- Added service command execution audit logging with configurable log channel.
+- Added API rate limiting (`throttle:corewatch`) on all package routes.
+- Added response caching for system metrics via `COREWATCH_METRICS_CACHE_TTL`.
+- Added full Arabic (`ar`) and English (`en`) localization with publishing support.
+- Added shared `CoreWatchAuthorizer` authorization contract for HTTP and Livewire contexts.
+- Enforced PHPStan Level 5 static analysis in CI and added Dependabot configuration.
+- Set dangerous service commands (`redis_flush`, `supervisor_restart`, `opcache_reset`) to disabled by default.
 
 ---
 
 ## [2.0.0] - 2026-06-05
 
-### Added
-- Clean Architecture layers: Contracts, Domain, Application, Infrastructure, Http
-- Repository pattern: `DatabaseStatsRepository`, `ApplicationHealthRepository`, `LogFileRepository`
-- Application Actions: `GetServerMetricsAction`, `ParseLogFileAction`, `ExecuteServiceCommandAction`, `CheckHealthAndAlertAction`
-- `EnsureCoreWatchAuthorized` middleware for centralized authorization
-- Form Requests: `LogsRequest`, `ControlServiceRequest`
-- `HealthThresholdEvaluator` domain service and `Alert` value object
-- `CoreWatch` Facade and `CoreWatchManager` for programmatic developer access
-- `GET /corewatch/api/health` endpoint for uptime monitors and Kubernetes probes
-- `ThresholdBreached` event for custom notification channels (PagerDuty, Discord, email, etc.)
-- `php artisan corewatch:install` one-command setup wizard
-- `docs/ARCHITECTURE.md`, `docs/FILAMENT.md`, `docs/TROUBLESHOOTING.md`
-- `SECURITY.md`, `pint.json`, and GitHub issue templates
-- Unit tests for `HealthThresholdEvaluator` and `LogFileRepository`
+## Summary
+Architecture redesign transitioning CoreWatch into a modular Clean Architecture package with developer facade, health probe endpoint, and extensible domain events.
 
-### Changed
-- Refactored monolithic `SystemMonitor` into 8 focused metric collectors
-- Refactored `LogParser` into `LogFileRepository`
-- Extracted Slack/Telegram notifications into dedicated notifier classes
-- `DashboardConfigDto` eliminates config duplication between Controller and Livewire
-- README rewritten with "Why CoreWatch?" comparison and Packagist-first installation
-
-### Fixed
-- Artisan queue restart command now uses `queue:restart` instead of `php artisan queue:restart`
-- Authorization gate config documented correctly (callable via `config()` in AppServiceProvider)
-- README badge links now point to the correct GitHub repository
+## Changes
+- Implemented Clean Architecture layers: Contracts, Domain, Application, Infrastructure, and Http presentation.
+- Introduced repository abstraction pattern for database stats, health checks, and log streaming.
+- Added application actions: `GetServerMetricsAction`, `ParseLogFileAction`, `ExecuteServiceCommandAction`, and `CheckHealthAndAlertAction`.
+- Added `CoreWatch` Facade and `CoreWatchManager` for programmatic developer and monitoring access.
+- Added `GET /corewatch/api/health` endpoint returning RFC-compliant status for load balancers and Kubernetes probes.
+- Added `ThresholdBreached` event enabling integration with third-party incident management systems.
+- Added `php artisan corewatch:install` automated setup wizard with production deployment checks.
+- Refactored monolithic system monitor into dedicated single-responsibility metric collectors.
+- Fixed queue restart command mapping to execute `queue:restart` without redundant binary prefixes.
+- Published comprehensive documentation guides for Architecture, Filament integration, and Security policy.
 
 ---
 
 ## [1.0.5] - 2026-05-19
 
-### Fixed
-- Replace parentheses with hyphen in Mermaid label to prevent parser shape collision
+## Summary
+Syntax fix resolving Mermaid architecture diagram rendering collisions in markdown parsers.
+
+## Changes
+- Replaced parentheses in Mermaid flowchart labels with hyphens to prevent shape delimiter collisions.
 
 ---
 
 ## [1.0.4] - 2026-05-19
 
-### Fixed
-- Resolve GitHub Actions Mermaid flowchart rendering syntax exception by moving styling classes to the bottom
+## Summary
+CI pipeline fix resolving Mermaid diagram parsing exceptions in GitHub rendering.
+
+## Changes
+- Relocated flowchart styling class definitions to document footer to resolve parser syntax exceptions.
 
 ---
 
 ## [1.0.3] - 2026-05-19
 
-### Changed
-- CI: exclude PHP 8.2 with Laravel 13.x from testing matrix (Laravel 13 requires PHP 8.3+)
+## Summary
+Matrix configuration update for GitHub Actions continuous integration.
+
+## Changes
+- Excluded incompatible PHP 8.2 and Laravel 13.x combinations from the automated test matrix.
 
 ---
 
 ## [1.0.2] - 2026-05-19
 
-### Fixed
-- Remove redundant components directory and fix README markdown spacing for centered HTML rendering
+## Summary
+Package structure cleanup and markdown layout corrections.
+
+## Changes
+- Removed obsolete component directory artifacts.
+- Corrected spacing syntax in documentation files for consistent markdown and HTML rendering.
 
 ---
 
 ## [1.0.1] - 2026-05-19
 
-### Changed
-- Modularize dashboard view into separate partial tables
-- Upgrade README with system architecture flowcharts
+## Summary
+Modularization of dashboard Blade views and documentation expansion.
+
+## Changes
+- Separated monolithic dashboard Blade view into individual, reusable component partials.
+- Added architecture flowcharts to repository documentation.
 
 ---
 
 ## [1.0.0] - 2026-05-19
 
-### Added
-- Initial release: embedded DevOps dashboard for Laravel 11, 12 & 13
-- CPU, RAM, Disk, uptime, and process monitoring via `/proc` filesystem
-- Memory-efficient backward-seeking log viewer (Laravel, Nginx, Apache)
-- Whitelisted service control panel (queue restart, cache clear, redis flush)
-- Slack and Telegram alerting via `corewatch:check-health` artisan command
-- Livewire component for Filament/Nova embedding
-- Modular Blade partials architecture
-- Cyberpunk DevOps dark theme UI (Tailwind CSS + AlpineJS, zero bundler)
-- Database telemetry for MySQL, PostgreSQL, and SQLite
-- App integrity checks (cache, queue, debug mode, environment)
-- GitHub Actions CI matrix: PHP 8.2–8.4 × Laravel 11–13
+## Summary
+Initial release of CoreWatch embedded DevOps monitoring dashboard for Laravel applications.
+
+## Changes
+- Added real-time CPU, RAM, Disk, Uptime, and Process monitoring via `/proc` filesystem and shell fallbacks.
+- Added memory-efficient backward-seeking log parser supporting Laravel, Nginx, and Apache logs.
+- Added whitelisted service command control panel for safe queue and cache maintenance.
+- Added Slack and Telegram threshold alert delivery via `corewatch:check-health` Artisan command.
+- Added standalone dashboard route, modular Blade partials, and Livewire component for admin panel integration.
+- Added database telemetry support for MySQL, PostgreSQL, and SQLite.
+- Added multi-environment GitHub Actions test matrix across PHP 8.2 through 8.4 and Laravel 11 through 13.
 
 ---
 
