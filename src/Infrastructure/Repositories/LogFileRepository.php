@@ -17,7 +17,7 @@ final class LogFileRepository implements LogReaderInterface
                 'logs' => [],
                 'total_scanned' => 0,
                 'has_more' => false,
-                'error' => "Log file does not exist or is not readable: {$path}",
+                'error' => 'Configured log file is unavailable or unreadable.',
             ];
         }
 

@@ -50,7 +50,7 @@ return [
     */
     'middleware' => [
         'web',
-        // 'auth', // Uncomment in production to require authentication
+        'auth',
     ],
 
     /*

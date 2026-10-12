@@ -65,7 +65,7 @@ Open **`/corewatch`** in your browser. That's it.
   <img src="docs/images/dashboard-preview.png" alt="CoreWatch Dashboard Preview" width="800">
 </p>
 
-For production, add `auth` middleware in `config/corewatch.php` and schedule health checks:
+The dashboard uses Laravel's `auth` middleware by default. Configure an authorization gate or a suitable middleware if your app uses a different access model. Public health/Prometheus endpoints are opt-in. Schedule health checks with:
 
 ```php
 // routes/console.php
@@ -366,7 +366,7 @@ Event::listen(ThresholdBreached::class, function (ThresholdBreached $event) {
 
 ## 🔒 Security Practices & Fallbacks
 1. **RCE Protection:** CoreWatch never accepts raw input strings to execute shell commands. It maps requests to rigid keys registered in `config/corewatch.php` and blocks any unauthorized requests.
-2. **Memory Safety:** The Log Parser uses direct `fseek` backward seeking to stream logs in 64KB blocks, maintaining a strict $O(1)$ memory consumption profile regardless of log file size.
+2. **Memory Safety:** The Log Parser uses direct `fseek` backward seeking and reads logs in 64KB blocks. Memory use is independent of total file size, though it also depends on the requested page and the size of individual log entries.
 3. **Graceful Fallbacks:** If commands like `exec` or `proc_open` are disabled in `php.ini`, the package falls back to parsing native `/proc` direct files and displays interactive notifications.
 
 ---

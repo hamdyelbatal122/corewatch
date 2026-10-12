@@ -21,7 +21,6 @@ final class ParseLogFileAction
      *     error?: string,
      *     not_found?: bool,
      *     file_name?: string,
-     *     file_path?: string
      * }
      */
     public function execute(string $fileKey, int $page, LogFilterDto $filters): array
@@ -50,7 +49,6 @@ final class ParseLogFileAction
         );
 
         $result['file_name'] = $logFile['name'];
-        $result['file_path'] = $logFile['path'];
 
         return $result;
     }

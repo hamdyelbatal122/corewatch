@@ -72,11 +72,12 @@ final class ExecuteServiceCommandAction
                 'output' => trim($output) ?: 'Command completed successfully (no output).',
             ];
         } catch (Throwable $e) {
+            report($e);
             $this->auditLogger->log($serviceKey, $service['name'], false, $userId, $ip);
 
             return [
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => 'Configured service command failed.',
             ];
         }
     }

@@ -59,6 +59,8 @@ COREWATCH_HEALTH_PUBLIC=false
 COREWATCH_PROMETHEUS_PUBLIC=false
 ```
 
+These endpoints require the configured middleware by default. Set either public flag to true only when the endpoint must be reachable without an authenticated session, and restrict access at the network or proxy layer where possible.
+
 ## 6. Performance
 
 ```env

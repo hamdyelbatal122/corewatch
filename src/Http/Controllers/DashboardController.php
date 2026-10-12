@@ -39,9 +39,11 @@ final class DashboardController extends Controller
                 'metrics' => $this->getMetrics->execute(),
             ]);
         } catch (Throwable $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => 'Unable to collect server metrics.',
             ], 500);
         }
     }
@@ -68,13 +70,14 @@ final class DashboardController extends Controller
                 'has_more' => $parsedData['has_more'],
                 'total_scanned' => $parsedData['total_scanned'],
                 'file_name' => $parsedData['file_name'] ?? '',
-                'file_path' => $parsedData['file_path'] ?? '',
                 'error' => $parsedData['error'] ?? null,
             ]);
         } catch (Throwable $e) {
+            report($e);
+
             return response()->json([
                 'success' => false,
-                'error' => $e->getMessage(),
+                'error' => 'Unable to read the requested log file.',
             ], 500);
         }
     }
@@ -97,7 +100,7 @@ final class DashboardController extends Controller
         if (! $result['success'] && isset($result['error'])) {
             return response()->json([
                 'success' => false,
-                'error' => $result['error'],
+                'error' => 'The configured service command failed.',
             ], 500);
         }
 
